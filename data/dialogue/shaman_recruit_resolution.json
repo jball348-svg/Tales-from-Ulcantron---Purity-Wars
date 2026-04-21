@@ -1,0 +1,13 @@
+{
+  "dialogue_id": "shaman_recruit_resolution",
+  "nodes": [
+    {
+      "speaker": "The Shaman",
+      "text": "The Shaman nods. No words. The chamber opens.",
+      "portrait_id": "shaman",
+      "portrait": "res://assets/art/portraits/stage_8_5/shaman_portrait.png",
+      "conditions": [],
+      "next": -1
+    }
+  ]
+}

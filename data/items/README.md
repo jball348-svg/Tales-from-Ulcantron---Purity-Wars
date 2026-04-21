@@ -1,0 +1,1 @@
+Item definition files live in this directory. Each production item should be stored as its own data file with a stable item id, player-facing name, gameplay properties, economy values, and any presentation references needed by the HUD, inventory, shops, and battle systems.

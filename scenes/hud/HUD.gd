@@ -75,7 +75,7 @@ var _button_disabled_texture: Texture2D
 @onready var _quest_title: Label = $Center/Frame/FrameMargin/Content/Tabs/Quest/QuestBody/QuestTitle
 @onready var _quest_objective: Label = $Center/Frame/FrameMargin/Content/Tabs/Quest/QuestBody/QuestObjective
 @onready var _quest_status: Label = $Center/Frame/FrameMargin/Content/Tabs/Quest/QuestBody/QuestStatus
-@onready var _map_placeholder: Label = $Center/Frame/FrameMargin/Content/Tabs/Map/MapBody/MapPlaceholder
+@onready var _map_notes_label: Label = $Center/Frame/FrameMargin/Content/Tabs/Map/MapBody/MapNotes
 
 @onready var _tab_stats_button: Button = $Center/Frame/FrameMargin/Content/NavigationRow/TabStatsButton
 @onready var _tab_equipment_button: Button = $Center/Frame/FrameMargin/Content/NavigationRow/TabEquipmentButton
@@ -309,7 +309,7 @@ func _refresh_all() -> void:
 	_refresh_stats_tab()
 	_refresh_equipment_tab()
 	_refresh_quest_tab()
-	_map_placeholder.text = "Map tab placeholder.\nTravel notes and region sketching land here next."
+	_map_notes_label.text = "Regional notes and route sketches will be added during content production."
 
 func _refresh_stats_tab() -> void:
 	var axes := AlignmentSystem.get_axis_labels()

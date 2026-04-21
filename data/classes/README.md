@@ -1,0 +1,1 @@
+Class and specialization definition files live in this directory. Each production class should define its identity, progression hooks, equipment affinities, unlock rules, and any branching specialization data that character creation, leveling, and narrative systems need to share.

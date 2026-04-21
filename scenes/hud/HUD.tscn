@@ -278,10 +278,10 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="MapPlaceholder" type="Label" parent="Center/Frame/FrameMargin/Content/Tabs/Map/MapBody"]
+[node name="MapNotes" type="Label" parent="Center/Frame/FrameMargin/Content/Tabs/Map/MapBody"]
 layout_mode = 2
 autowrap_mode = 3
-text = "Map tab placeholder."
+text = "Regional notes and route sketches will be added during content production."
 
 [node name="MapSpacer" type="Control" parent="Center/Frame/FrameMargin/Content/Tabs/Map/MapBody"]
 layout_mode = 2

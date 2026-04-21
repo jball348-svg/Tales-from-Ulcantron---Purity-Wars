@@ -1,0 +1,27 @@
+{
+  "dialogue_id": "moral_choice_npc",
+  "nodes": [
+    {
+      "speaker": "Traveling Merchant",
+      "text": "I passed a creature on the road, part Kobold and part something else. Whether you kill it or parley, that will say something about you.",
+      "portrait_id": "traveling_merchant",
+      "portrait": "",
+      "conditions": [
+        { "type": "flag_set", "flag": "shaman_warning_given", "negate": true }
+      ],
+      "set_flags": [
+        { "flag": "shaman_warning_given", "value": true }
+      ],
+      "fallback": 1,
+      "next": -1
+    },
+    {
+      "speaker": "Traveling Merchant",
+      "text": "I have told you all I know, friend. The rest is up to you.",
+      "portrait_id": "traveling_merchant",
+      "portrait": "",
+      "conditions": [],
+      "next": -1
+    }
+  ]
+}

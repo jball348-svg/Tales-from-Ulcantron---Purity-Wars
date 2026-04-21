@@ -1,0 +1,36 @@
+{
+  "dialogue_id": "shaman_intro_cutscene",
+  "nodes": [
+    {
+      "speaker": "The Shaman",
+      "text": "Another pureblood who fears what they cannot name.",
+      "portrait_id": "shaman",
+      "portrait": "res://assets/art/portraits/stage_8_5/shaman_portrait.png",
+      "conditions": [
+        { "type": "pure_path" }
+      ],
+      "fallback": 1,
+      "next": 2
+    },
+    {
+      "speaker": "The Shaman",
+      "text": "You carry both bloods. I see the war in you.",
+      "portrait_id": "shaman",
+      "portrait": "res://assets/art/portraits/stage_8_5/shaman_portrait.png",
+      "conditions": [
+        { "type": "mixed_path" }
+      ],
+      "next": 2
+    },
+    {
+      "speaker": "The Shaman",
+      "text": "Someone warned you. And still you came.",
+      "portrait_id": "shaman",
+      "portrait": "res://assets/art/portraits/stage_8_5/shaman_portrait.png",
+      "conditions": [
+        { "type": "flag_set", "flag": "shaman_warning_given" }
+      ],
+      "next": -1
+    }
+  ]
+}

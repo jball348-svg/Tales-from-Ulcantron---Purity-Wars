@@ -69,5 +69,5 @@ size_flags_horizontal = 3
 size_flags_horizontal = 3
 
 [node name="AdvancePrompt" type="Label" parent="Panel/Margin/Content/RightColumn/Footer"]
-text = "▶ E to continue"
+text = "E to continue"
 theme_override_font_sizes/font_size = 9

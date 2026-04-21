@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://col8wkctu8q3n"
-path="res://.godot/imported/02_town_collision_blocked.png-73fe6d307a5e6d11b3e75a95bf59385b.ctex"
+path="res://.godot/imported/02_town_collision_blocked.png-7c0827bda7f90a9a305e599843bcd7a5.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://tools/evidence/stage_10/02_town_collision_blocked.png"
-dest_files=["res://.godot/imported/02_town_collision_blocked.png-73fe6d307a5e6d11b3e75a95bf59385b.ctex"]
+source_file="res://tools/archive/vertical_slice/evidence/stage_10/02_town_collision_blocked.png"
+dest_files=["res://.godot/imported/02_town_collision_blocked.png-7c0827bda7f90a9a305e599843bcd7a5.ctex"]
 
 [params]
 

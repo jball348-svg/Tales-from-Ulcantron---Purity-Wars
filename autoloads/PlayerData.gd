@@ -69,7 +69,7 @@ var current_hp: int = 0
 
 func _ready() -> void:
 	SignalBus.new_day.connect(_on_new_day)
-	ensure_spike_defaults()
+	ensure_profile_defaults()
 
 # Age advances with the clock.
 func _on_new_day(_day_number: int) -> void:
@@ -133,7 +133,7 @@ func apply_save_data(save_data: Variant) -> void:
 	specialisation = str(player_data.get("specialisation", ""))
 	mixed_classes = _duplicate_array(player_data.get("mixed_classes", []))
 	if chosen_class == "":
-		_apply_vertical_slice_class_defaults_for_current_path()
+		_apply_class_defaults_for_current_path()
 
 	flags = _duplicate_dictionary(player_data.get("flags", {}))
 	ghost_flags = _duplicate_dictionary(player_data.get("ghost_flags", {}))
@@ -186,16 +186,16 @@ func _restore_progression_value(value: Variant, fallback: int, minimum: int) -> 
 	return maxi(minimum, int(value))
 
 # --- Convenience ---
-func ensure_spike_defaults() -> void:
+func ensure_profile_defaults() -> void:
 	if chosen_path == "":
-		set_vertical_slice_debug_profile("pure")
+		set_profile_path("pure")
 
-	if resolve_vertical_slice_class_id() == "":
-		_apply_vertical_slice_class_defaults_for_current_path()
+	if resolve_class_id() == "":
+		_apply_class_defaults_for_current_path()
 
 	ensure_progression_defaults()
-	ensure_vertical_slice_equipment()
-	ensure_vertical_slice_inventory()
+	ensure_starting_equipment()
+	ensure_starting_inventory()
 	if current_hp <= 0:
 		restore_hp_full()
 
@@ -205,7 +205,7 @@ func ensure_progression_defaults() -> void:
 	xp_to_next_level = maxi(1, xp_to_next_level)
 	unspent_stat_points = maxi(DEFAULT_UNSPENT_STAT_POINTS, unspent_stat_points)
 
-func ensure_vertical_slice_equipment() -> void:
+func ensure_starting_equipment() -> void:
 	if str(equipment.get("weapon", "")) == "":
 		equipment["weapon"] = DEFAULT_STARTER_WEAPON
 
@@ -220,9 +220,9 @@ func set_chosen_path(path: String) -> void:
 	chosen_path = path
 	SignalBus.flag_set.emit("chosen_path", chosen_path)
 
-func set_vertical_slice_debug_profile(path: String) -> void:
+func set_profile_path(path: String) -> void:
 	if not VALID_PATHS.has(path):
-		push_warning("Invalid debug profile requested: %s" % path)
+		push_warning("Invalid profile path requested: %s" % path)
 		return
 
 	set_chosen_path(path)
@@ -234,7 +234,7 @@ func set_vertical_slice_debug_profile(path: String) -> void:
 	else:
 		chosen_class = CLASS_FIGHTER
 
-func resolve_vertical_slice_class_id() -> String:
+func resolve_class_id() -> String:
 	if chosen_class != "":
 		return chosen_class.to_lower()
 
@@ -245,7 +245,7 @@ func resolve_vertical_slice_class_id() -> String:
 	return ""
 
 func has_battle_magik() -> bool:
-	return resolve_vertical_slice_class_id() == CLASS_BATTLEMAGE
+	return resolve_class_id() == CLASS_BATTLEMAGE
 
 func get_battle_weapon_modifier() -> int:
 	return DEFAULT_WEAPON_MODIFIER
@@ -269,11 +269,11 @@ func take_battle_damage(amount: int) -> int:
 	set_current_hp(current_hp - max(amount, 0))
 	return before - current_hp
 
-func ensure_vertical_slice_inventory() -> void:
+func ensure_starting_inventory() -> void:
 	if get_item_count(HEALTH_POTION_ID) <= 0:
 		set_item_count(HEALTH_POTION_ID, DEFAULT_POTION_COUNT)
 
-func reset_vertical_slice_battle_resources() -> void:
+func restore_battle_resources() -> void:
 	set_item_count(HEALTH_POTION_ID, DEFAULT_POTION_COUNT)
 	restore_hp_full()
 
@@ -318,7 +318,7 @@ func _find_inventory_index(item_id: String) -> int:
 			return index
 	return -1
 
-func _apply_vertical_slice_class_defaults_for_current_path() -> void:
+func _apply_class_defaults_for_current_path() -> void:
 	if is_mixed():
 		chosen_class = CLASS_BATTLEMAGE
 	else:

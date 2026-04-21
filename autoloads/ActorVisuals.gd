@@ -45,7 +45,7 @@ func get_registry() -> Dictionary:
 	return _registry.duplicate(true)
 
 func resolve_player_actor_id() -> String:
-	return ACTOR_PLAYER_BATTLEMAGE if PlayerData.resolve_vertical_slice_class_id() == PlayerData.CLASS_BATTLEMAGE else ACTOR_PLAYER_FIGHTER
+	return ACTOR_PLAYER_BATTLEMAGE if PlayerData.resolve_class_id() == PlayerData.CLASS_BATTLEMAGE else ACTOR_PLAYER_FIGHTER
 
 func get_map_offset(actor_id: String) -> Vector2:
 	var map_entry: Dictionary = _actor_section(actor_id, "map")

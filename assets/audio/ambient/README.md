@@ -1,0 +1,1 @@
+Ambient loops belong in this directory. Use it for environmental beds such as wind, room tone, market chatter, or dungeon drones that will be triggered by maps, cutscenes, and future area definition data.

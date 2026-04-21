@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cs37nyucpee8a"
-path="res://.godot/imported/11_mine_exit_victory.png-755d28f64f9d72f134dbf9f5a0291299.ctex"
+path="res://.godot/imported/11_mine_exit_victory.png-6a2ff64c195946b47e666eed2ee76fac.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://tools/evidence/stage_10/11_mine_exit_victory.png"
-dest_files=["res://.godot/imported/11_mine_exit_victory.png-755d28f64f9d72f134dbf9f5a0291299.ctex"]
+source_file="res://tools/archive/vertical_slice/evidence/stage_10/11_mine_exit_victory.png"
+dest_files=["res://.godot/imported/11_mine_exit_victory.png-6a2ff64c195946b47e666eed2ee76fac.ctex"]
 
 [params]
 

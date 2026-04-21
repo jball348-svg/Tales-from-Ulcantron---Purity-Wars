@@ -11,14 +11,14 @@ const COMPACT_VIEWPORT_HEIGHT := 360.0
 @onready var body_label: Label = $Panel/Margin/Content/RightColumn/BodyLabel
 @onready var advance_prompt: Label = $Panel/Margin/Content/RightColumn/Footer/AdvancePrompt
 
-var _placeholder_portrait: Texture2D
+var _fallback_portrait: Texture2D
 
 func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	visible = false
-	
-	_placeholder_portrait = portrait_rect.texture
-	advance_prompt.text = "▶ E to continue"
+
+	_fallback_portrait = portrait_rect.texture
+	advance_prompt.text = "E to continue"
 	_apply_layout_for_viewport()
 
 	if not get_viewport().size_changed.is_connected(_on_viewport_size_changed):
@@ -70,7 +70,7 @@ func _on_dialogue_ended(_npc_id: String) -> void:
 	visible = false
 	speaker_label.text = ""
 	body_label.text = ""
-	portrait_rect.texture = _placeholder_portrait
+	portrait_rect.texture = _fallback_portrait
 
 func _refresh_from_current_node() -> void:
 	if not DialogueManager.is_active():
@@ -92,15 +92,15 @@ func _apply_portrait(portrait_path: String, portrait_id: String = "") -> void:
 			return
 
 	if portrait_path == "":
-		portrait_rect.texture = _placeholder_portrait
+		portrait_rect.texture = _fallback_portrait
 		return
 
 	if not ResourceLoader.exists(portrait_path):
-		portrait_rect.texture = _placeholder_portrait
+		portrait_rect.texture = _fallback_portrait
 		return
 
 	var portrait := load(portrait_path) as Texture2D
-	portrait_rect.texture = portrait if portrait != null else _placeholder_portrait
+	portrait_rect.texture = portrait if portrait != null else _fallback_portrait
 
 func _is_space_pressed(event: InputEvent) -> bool:
 	if not (event is InputEventKey):

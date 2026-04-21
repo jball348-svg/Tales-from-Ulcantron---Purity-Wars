@@ -1,0 +1,1 @@
+Enemy definition files live in this directory. Each production enemy should describe combat role, stats, abilities, rewards, encounter metadata, and presentation hooks so battle content can be authored as data instead of hardcoded scene logic.

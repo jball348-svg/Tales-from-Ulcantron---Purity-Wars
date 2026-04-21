@@ -43,11 +43,42 @@ var _current_music_path := ""
 var _last_sfx_id := ""
 var _sfx_history: Array[String] = []
 
+func _is_headless_runtime() -> bool:
+	return DisplayServer.get_name().to_lower() == "headless"
+
 func _ready() -> void:
 	_build_music_catalog()
+	if _is_headless_runtime():
+		return
 	_ensure_players()
 
+func _exit_tree() -> void:
+	for player in _music_players:
+		if player == null:
+			continue
+		player.stop()
+		player.stream = null
+
+	for player in _sfx_players:
+		if player == null:
+			continue
+		player.stop()
+		player.stream = null
+
+	_stream_cache.clear()
+	_current_cue_id = ""
+	_current_variant = ""
+	_current_music_path = ""
+	_last_sfx_id = ""
+	_sfx_history.clear()
+
 func play_music(cue_id: String, variant: String = "primary", restart: bool = false, fade_seconds: float = 0.35) -> void:
+	if _is_headless_runtime():
+		_current_cue_id = cue_id
+		_current_variant = variant
+		_current_music_path = ""
+		return
+
 	_ensure_players()
 	var cue_entry: Dictionary = _music_catalog.get(cue_id, {})
 	if cue_entry.is_empty():
@@ -93,6 +124,12 @@ func play_music(cue_id: String, variant: String = "primary", restart: bool = fal
 	_current_music_path = resource_path
 
 func stop_music(fade_seconds: float = 0.35) -> void:
+	if _is_headless_runtime():
+		_current_cue_id = ""
+		_current_variant = ""
+		_current_music_path = ""
+		return
+
 	_ensure_players()
 	var active_player := _music_players[_active_music_index]
 	if not active_player.playing:
@@ -116,6 +153,13 @@ func stop_music(fade_seconds: float = 0.35) -> void:
 	_current_music_path = ""
 
 func play_sfx(sfx_id: String, volume_db: float = 0.0, pitch_scale: float = 1.0) -> void:
+	if _is_headless_runtime():
+		_last_sfx_id = sfx_id
+		_sfx_history.append(sfx_id)
+		if _sfx_history.size() > 16:
+			_sfx_history.pop_front()
+		return
+
 	_ensure_players()
 	var resource_path := str(SFX_LIBRARY.get(sfx_id, ""))
 	if resource_path == "":

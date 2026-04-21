@@ -1,18 +1,17 @@
-# SignalBus.gd
-# Global signal declarations. Every game event passes through here.
-# Nothing else lives in this file — just signals.
-# Any scene or system can emit or connect to these without direct references.
 extends Node
+
+# Global signal declarations. Every game event passes through here.
+# Nothing else lives in this file - just signals.
+# Any scene or system can emit or connect to these without direct references.
 
 # --- Action signals ---
 # Emitted whenever the player performs any tracked action.
-# payload: Dictionary with keys relevant to the action type.
-# e.g. { "type": "walk", "location": "town", "companions": 0 }
+# Payload example: { "type": "walk", "location": "town", "companions": 0 }
 signal action_performed(payload: Dictionary)
 
 # --- Stat signals ---
 # Emitted by StatRegistry after it processes a stat change.
-# Anything that displays stats (HUD, debug panel) listens here.
+# Anything that displays stats, overlays, or progression UI listens here.
 signal stat_changed(stat_path: String, new_value: float)
 
 # --- Clock signals ---
@@ -31,14 +30,9 @@ signal dialogue_started(npc_id: String)
 signal dialogue_ended(npc_id: String)
 
 # --- Flag signals ---
-# Emitted when a major player flag is set (Pure/Mix choice, moral decisions).
+# Emitted when a major player flag is set.
 signal flag_set(flag_name: String, value: Variant)
 
 # --- Progression signals ---
 # Emitted once for each level gained after XP overflow is resolved.
 signal level_up(level: int)
-
-# --- Debug overlay signals ---
-# Emitted whenever the persistent debug panel visibility changes so scene-local
-# helper overlays can follow the same user-hidden state.
-signal debug_overlay_visibility_changed(visible: bool)

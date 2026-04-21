@@ -1,0 +1,1 @@
+Gameplay sound effects belong in this directory. Keep short, implementation-ready assets here for UI feedback, footsteps, combat actions, and world interactions, using stable ids and filenames that match the runtime audio catalog.

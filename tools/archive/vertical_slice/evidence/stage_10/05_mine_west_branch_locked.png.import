@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cq5tvqj7548y2"
-path="res://.godot/imported/05_mine_west_branch_locked.png-66642c6e6f15c51434c1659a67d49ddb.ctex"
+path="res://.godot/imported/05_mine_west_branch_locked.png-e7cc3ed05908c10be575f989b4f1418b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://tools/evidence/stage_10/05_mine_west_branch_locked.png"
-dest_files=["res://.godot/imported/05_mine_west_branch_locked.png-66642c6e6f15c51434c1659a67d49ddb.ctex"]
+source_file="res://tools/archive/vertical_slice/evidence/stage_10/05_mine_west_branch_locked.png"
+dest_files=["res://.godot/imported/05_mine_west_branch_locked.png-e7cc3ed05908c10be575f989b4f1418b.ctex"]
 
 [params]
 

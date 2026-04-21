@@ -1,15 +1,21 @@
-# SceneManager.gd
-# Owns exclusive game-state scene changes for the spike.
-# Map, Battle, and Cutscene live here; HUD/debug overlays stay persistent elsewhere.
 extends Node
 
+const FRONTIER_REGION := "frontier_village"
+const MINE_REGION := "kobold_mine"
+const CROSSROADS_REGION := "crossroads_region"
+
 const STATE_SCENES: Dictionary = {
-	"map": "res://scenes/map/Map.tscn",
 	"battle": "res://scenes/battle/Battle.tscn",
 	"cutscene": "res://scenes/cutscene/Cutscene.tscn",
 }
 
-var current_state_name: String = ""
+const MAP_SCENES_BY_REGION := {
+	FRONTIER_REGION: "res://scenes/map/FrontierHamlet.tscn",
+	MINE_REGION: "res://scenes/map/KoboldMine.tscn",
+	CROSSROADS_REGION: "res://scenes/map/Crossroads.tscn",
+}
+
+var current_state_name := ""
 var current_state_scene: Node = null
 var current_state_payload: Dictionary = {}
 
@@ -48,11 +54,11 @@ func change_state(new_state: String, payload: Dictionary = {}, force_reload: boo
 		current_state_payload = payload.duplicate(true)
 		return true
 
-	if not STATE_SCENES.has(new_state):
+	var scene_path := _resolve_scene_path(new_state, payload)
+	if scene_path == "":
 		push_error("Unknown state requested: %s" % new_state)
 		return false
 
-	var scene_path: String = STATE_SCENES[new_state]
 	if not ResourceLoader.exists(scene_path):
 		push_warning("State scene is not implemented yet: %s" % scene_path)
 		return false
@@ -72,8 +78,17 @@ func change_state(new_state: String, payload: Dictionary = {}, force_reload: boo
 	var next_scene: Node = packed_scene.instantiate()
 	_state_host.add_child(next_scene)
 
-	var previous_state: String = current_state_name
+	var previous_state := current_state_name
 	current_state_name = new_state
 	current_state_scene = next_scene
 	SignalBus.state_changed.emit(previous_state, new_state)
 	return true
+
+func _resolve_scene_path(new_state: String, payload: Dictionary) -> String:
+	if new_state == "map":
+		var target_region := str(payload.get("return_region", PlayerData.current_region))
+		if target_region == "":
+			target_region = FRONTIER_REGION
+		return str(MAP_SCENES_BY_REGION.get(target_region, MAP_SCENES_BY_REGION[FRONTIER_REGION]))
+
+	return str(STATE_SCENES.get(new_state, ""))

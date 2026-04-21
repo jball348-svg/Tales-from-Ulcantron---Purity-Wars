@@ -1,0 +1,25 @@
+{
+  "dialogue_id": "intel_npc",
+  "nodes": [
+    {
+      "speaker": "Village Guard",
+      "text": "The Kobold leader is a half-breed Shaman. Take fire and coin.",
+      "portrait_id": "village_guard",
+      "portrait": "",
+      "conditions": [
+        { "type": "stat_gte", "stat": "social.charm", "value": 10.0 },
+        { "type": "gold_gte", "value": 20 }
+      ],
+      "fallback": 1,
+      "next": -1
+    },
+    {
+      "speaker": "Village Guard",
+      "text": "The mine is blocked. Something has taken up in there.",
+      "portrait_id": "village_guard",
+      "portrait": "",
+      "conditions": [],
+      "next": -1
+    }
+  ]
+}

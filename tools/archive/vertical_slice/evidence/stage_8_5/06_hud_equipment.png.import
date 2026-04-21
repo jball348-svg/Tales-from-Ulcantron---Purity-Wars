@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b7tsrcvyqxyjy"
-path="res://.godot/imported/06_hud_equipment.png-c70e4c5d5c8280af09a1afce514272f4.ctex"
+path="res://.godot/imported/06_hud_equipment.png-470a2772cee142281be58fd479ae0760.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://tools/evidence/stage_8_5/06_hud_equipment.png"
-dest_files=["res://.godot/imported/06_hud_equipment.png-c70e4c5d5c8280af09a1afce514272f4.ctex"]
+source_file="res://tools/archive/vertical_slice/evidence/stage_8_5/06_hud_equipment.png"
+dest_files=["res://.godot/imported/06_hud_equipment.png-470a2772cee142281be58fd479ae0760.ctex"]
 
 [params]
 

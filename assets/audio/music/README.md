@@ -1,0 +1,1 @@
+Production music cues belong in this directory. Store mastered in-game tracks here with stable filenames so AudioManager, scene transitions, and future audio data files can reference them without depending on one-off exports or duplicate working files.

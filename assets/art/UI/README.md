@@ -1,0 +1,1 @@
+Shared UI art assets belong in this directory. Store frame textures, button states, icons, cursors, and any exported interface source files here so HUD, dialogue, prompts, and menus all pull from the same production asset surface.

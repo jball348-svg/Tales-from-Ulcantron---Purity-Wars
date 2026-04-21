@@ -13,9 +13,7 @@ const UI_BUTTON_PRESSED_TEXTURE_PATH := "res://assets/art/UI/kenney_ui-pack-rpg-
 const UI_BUTTON_DISABLED_TEXTURE_PATH := "res://assets/art/UI/kenney_ui-pack-rpg-expansion/PNG/buttonLong_grey.png"
 
 const BATTLE_KIND_STANDARD := "standard"
-const BATTLE_KIND_BOSS_PLACEHOLDER := "boss_placeholder"
 const BATTLE_KIND_BOSS_SHAMAN := "boss_shaman"
-const BATTLE_KIND_DEBUG := "debug"
 
 const MINE_ENCOUNTER_PROGRESS_FLAG := "mine_encounter_progress"
 const MINE_BOSS_READY_FLAG := "mine_boss_ready"
@@ -86,8 +84,6 @@ var _ability_button: Button
 var _center_banner: Label
 var _loot_panel: PanelContainer
 var _loot_label: Label
-var _boss_placeholder_panel: PanelContainer
-var _boss_placeholder_label: Label
 var _game_over_panel: PanelContainer
 var _game_over_label: Label
 var _try_again_button: Button
@@ -120,7 +116,6 @@ var _enemy_defend_active := false
 var _enemy_staggered := false
 var _input_locked := true
 var _battle_over := false
-var _boss_placeholder_mode := false
 var _shaman_boss_mode := false
 var _shaman_heal_used := false
 var _player_hexed := false
@@ -165,11 +160,6 @@ func _draw() -> void:
 	)
 
 func _unhandled_input(event: InputEvent) -> void:
-	if OS.is_debug_build() and not _input_locked and not _battle_over and event.is_action_pressed("dev_skip_battle"):
-		get_viewport().set_input_as_handled()
-		_dev_skip_to_victory()
-		return
-
 	if _input_locked or _battle_over:
 		return
 
@@ -394,26 +384,6 @@ func _build_center_overlays() -> void:
 	_loot_label.add_theme_font_size_override("font_size", int(_scale_font(9.0)))
 	loot_margin.add_child(_loot_label)
 
-	_boss_placeholder_panel = PanelContainer.new()
-	_boss_placeholder_panel.visible = false
-	_boss_placeholder_panel.add_theme_stylebox_override("panel", _make_panel_style(_panel_texture))
-	_ui_root.add_child(_boss_placeholder_panel)
-
-	var boss_margin := MarginContainer.new()
-	boss_margin.set_anchors_preset(Control.PRESET_FULL_RECT)
-	boss_margin.add_theme_constant_override("margin_left", 16)
-	boss_margin.add_theme_constant_override("margin_top", 14)
-	boss_margin.add_theme_constant_override("margin_right", 16)
-	boss_margin.add_theme_constant_override("margin_bottom", 14)
-	_boss_placeholder_panel.add_child(boss_margin)
-
-	_boss_placeholder_label = Label.new()
-	_boss_placeholder_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_boss_placeholder_label.autowrap_mode = TextServer.AUTOWRAP_WORD
-	_boss_placeholder_label.text = "Boss encounter — Stage 6"
-	_boss_placeholder_label.add_theme_font_size_override("font_size", int(_scale_font(10.0)))
-	boss_margin.add_child(_boss_placeholder_label)
-
 	_game_over_panel = PanelContainer.new()
 	_game_over_panel.visible = false
 	_game_over_panel.add_theme_stylebox_override("panel", _make_panel_style(_panel_texture))
@@ -451,13 +421,12 @@ func _build_center_overlays() -> void:
 	button_row.add_child(_quit_button)
 
 func _configure_battle_state() -> void:
-	_player_class_id = PlayerData.resolve_vertical_slice_class_id()
+	_player_class_id = PlayerData.resolve_class_id()
 	if _player_class_id == "":
-		PlayerData.ensure_spike_defaults()
-		_player_class_id = PlayerData.resolve_vertical_slice_class_id()
+		PlayerData.ensure_profile_defaults()
+		_player_class_id = PlayerData.resolve_class_id()
 
 	_shaman_boss_mode = _encounter_kind() == BATTLE_KIND_BOSS_SHAMAN
-	_boss_placeholder_mode = _encounter_kind() == BATTLE_KIND_BOSS_PLACEHOLDER
 	_shaman_heal_used = false
 	_player_hexed = false
 	_enemy_defend_active = false
@@ -483,16 +452,16 @@ func _configure_battle_state() -> void:
 		_enemy_intro_log = "A kobold rushes from the dark."
 
 	_apply_battle_sprite_art()
-	PlayerData.ensure_vertical_slice_inventory()
+	PlayerData.ensure_starting_inventory()
 	if PlayerData.current_hp <= 0:
 		PlayerData.restore_hp_full()
 
 	_player_name_label.text = PlayerData.get_display_class()
-	_enemy_name_label.text = "Boss Gate" if _boss_placeholder_mode else _enemy_display_name
+	_enemy_name_label.text = _enemy_display_name
 	_player_portrait_texture.texture = _load_player_presentation_card()
 	_enemy_portrait_texture.texture = _load_enemy_presentation_card()
-	_append_log("The sealed chamber stirs." if _boss_placeholder_mode else _enemy_intro_log)
-	AudioManager.play_music(AudioManager.CUE_BOSS if _shaman_boss_mode or _boss_placeholder_mode else AudioManager.CUE_BATTLE)
+	_append_log(_enemy_intro_log)
+	AudioManager.play_music(AudioManager.CUE_BOSS if _shaman_boss_mode else AudioManager.CUE_BATTLE)
 
 func _layout_scene() -> void:
 	var viewport_size := get_viewport_rect().size
@@ -534,9 +503,6 @@ func _layout_scene() -> void:
 
 	_loot_panel.position = Vector2(_scale_x(126.0), _scale_y(116.0 + BATTLE_CONTENT_Y_OFFSET))
 	_loot_panel.size = Vector2(_scale_x(228.0), _scale_y(52.0))
-
-	_boss_placeholder_panel.position = Vector2(_scale_x(110.0), _scale_y(110.0 + BATTLE_CONTENT_Y_OFFSET))
-	_boss_placeholder_panel.size = Vector2(_scale_x(260.0), _scale_y(52.0))
 
 	_game_over_panel.position = Vector2(_scale_x(108.0), _scale_y(92.0 + BATTLE_CONTENT_Y_OFFSET))
 	_game_over_panel.size = Vector2(_scale_x(264.0), _scale_y(86.0))
@@ -675,7 +641,7 @@ func _refresh_main_menu_buttons() -> void:
 	if _attack_button == null:
 		return
 
-	var can_act := not _input_locked and not _battle_over and not _boss_placeholder_mode
+	var can_act := not _input_locked and not _battle_over
 	_attack_button.disabled = not can_act
 	_spell_button.disabled = not can_act or not PlayerData.has_battle_magik()
 	_spell_button.tooltip_text = "" if PlayerData.has_battle_magik() else "No Magik ability."
@@ -745,10 +711,6 @@ func _start_battle_flow() -> void:
 		var fade_tween: Tween = screen_fader.fade_from_black(0.35)
 		await fade_tween.finished
 
-	if _boss_placeholder_mode:
-		_run_boss_placeholder_sequence()
-		return
-
 	_begin_player_turn()
 
 func _begin_player_turn() -> void:
@@ -760,10 +722,6 @@ func _begin_player_turn() -> void:
 	_show_main_menu()
 	_append_log("Your turn.")
 	_refresh_all_ui()
-
-func _dev_skip_to_victory() -> void:
-	_append_log("[DEV] Battle skipped.")
-	_run_victory_sequence()
 
 func _begin_enemy_turn() -> void:
 	_input_locked = true
@@ -1132,18 +1090,6 @@ func _run_defeat_sequence() -> void:
 	_game_over_panel.visible = true
 	_try_again_button.grab_focus()
 
-func _run_boss_placeholder_sequence() -> void:
-	_battle_over = true
-	_input_locked = true
-	_main_menu_panel.visible = false
-	_submenu_panel.visible = false
-	_turn_label.text = ""
-	_boss_placeholder_panel.visible = true
-	_append_log("Boss encounter — Stage 6.")
-	await get_tree().create_timer(2.0).timeout
-	_boss_placeholder_panel.visible = false
-	_return_to_map("Boss encounter — Stage 6.", str(_context.get("suppressed_trigger_type", "")), int(_context.get("suppressed_trigger_index", -1)))
-
 func _xp_reward_for_current_encounter() -> int:
 	return SHAMAN_XP_REWARD if _shaman_boss_mode else KOBOLD_XP_REWARD
 
@@ -1203,7 +1149,7 @@ func _return_to_map_async(status_text: String, suppressed_trigger_type: String, 
 	SceneManager.change_state("map", map_payload)
 
 func _on_try_again_pressed() -> void:
-	PlayerData.reset_vertical_slice_battle_resources()
+	PlayerData.restore_battle_resources()
 	SceneManager.clear_state_payload()
 	get_tree().reload_current_scene()
 
@@ -1380,7 +1326,7 @@ func _enemy_actor_id() -> String:
 	return ActorVisuals.ACTOR_SHAMAN if _shaman_boss_mode else ActorVisuals.ACTOR_KOBOLD
 
 func _encounter_kind() -> String:
-	return str(_context.get("encounter_kind", BATTLE_KIND_DEBUG))
+	return str(_context.get("encounter_kind", BATTLE_KIND_STANDARD))
 
 func _environment_id() -> String:
 	return str(_context.get("environment_id", "mine"))

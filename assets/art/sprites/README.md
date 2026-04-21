@@ -1,0 +1,1 @@
+Character, NPC, and enemy sprite sources belong in this directory. Store production-ready sprite sheets and export sources here so map, cutscene, and battle presentation assets share a clear home outside temporary generation outputs.

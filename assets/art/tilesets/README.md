@@ -1,0 +1,1 @@
+Tileset source art and supporting textures belong in this directory. Keep production tiles, collision-authored tileset resources, and any source sheets here so map scenes can rely on editor-authored environment assets instead of runtime generation.

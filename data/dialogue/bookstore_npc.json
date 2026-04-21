@@ -1,0 +1,39 @@
+{
+  "dialogue_id": "bookstore_npc",
+  "nodes": [
+    {
+      "speaker": "Bookstore Keeper",
+      "text": "Ah, a student of Destruction. This tome is yours.",
+      "portrait_id": "bookstore_keeper",
+      "portrait": "",
+      "conditions": [
+        { "type": "stat_gte", "stat": "intelligence.understanding", "value": 10.0 },
+        { "type": "flag_set", "flag": "destruction_spell_unlocked", "negate": true }
+      ],
+      "set_flags": [
+        { "flag": "destruction_spell_unlocked", "value": true }
+      ],
+      "fallback": 1,
+      "next": -1
+    },
+    {
+      "speaker": "Bookstore Keeper",
+      "text": "Study well. Come back when you need more.",
+      "portrait_id": "bookstore_keeper",
+      "portrait": "",
+      "conditions": [
+        { "type": "flag_set", "flag": "destruction_spell_unlocked" }
+      ],
+      "fallback": 2,
+      "next": -1
+    },
+    {
+      "speaker": "Bookstore Keeper",
+      "text": "You lack the understanding to use this. Come back when you have studied more.",
+      "portrait_id": "bookstore_keeper",
+      "portrait": "",
+      "conditions": [],
+      "next": -1
+    }
+  ]
+}

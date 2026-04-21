@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://3pu5hihn4opj"
-path="res://.godot/imported/10_shaman_kill_return.png-e8dc1eca4bb79e6f2780782838838443.ctex"
+path="res://.godot/imported/10_shaman_kill_return.png-073ed39b1cb1a75ed2ba9ccb055893e4.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://tools/evidence/stage_10/10_shaman_kill_return.png"
-dest_files=["res://.godot/imported/10_shaman_kill_return.png-e8dc1eca4bb79e6f2780782838838443.ctex"]
+source_file="res://tools/archive/vertical_slice/evidence/stage_10/10_shaman_kill_return.png"
+dest_files=["res://.godot/imported/10_shaman_kill_return.png-073ed39b1cb1a75ed2ba9ccb055893e4.ctex"]
 
 [params]
 
