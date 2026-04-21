@@ -305,22 +305,10 @@ func _build_ui() -> void:
 func _load_ui_textures() -> void:
 	var ui_slots: Dictionary = _config.get("ui_slots", {})
 	_panel_texture = _load_texture_if_exists(str(ui_slots.get("panel", "")))
-	if _panel_texture == null:
-		_panel_texture = _load_texture(UI_PANEL_TEXTURE_PATH)
-
 	_inset_texture = _load_texture_if_exists(str(ui_slots.get("inset", "")))
-	if _inset_texture == null:
-		_inset_texture = _load_texture(UI_INSET_TEXTURE_PATH)
-
 	_button_texture = _load_texture_if_exists(str(ui_slots.get("button", "")))
-	if _button_texture == null:
-		_button_texture = _load_texture(UI_BUTTON_TEXTURE_PATH)
-
 	_button_pressed_texture = _load_texture_if_exists(str(ui_slots.get("button_pressed", "")))
-	if _button_pressed_texture == null:
-		_button_pressed_texture = _load_texture(UI_BUTTON_PRESSED_TEXTURE_PATH)
-
-	_button_disabled_texture = _load_texture(UI_BUTTON_DISABLED_TEXTURE_PATH)
+	_button_disabled_texture = null
 
 func _load_title_config() -> Dictionary:
 	var config := DEFAULT_CONFIG.duplicate(true)
@@ -374,7 +362,8 @@ func _apply_asset_slots() -> void:
 
 	_emblem_rect.texture = _emblem_texture
 	_emblem_rect.visible = _emblem_texture != null
-	_emblem_placeholder.visible = _emblem_texture == null
+	_emblem_placeholder.visible = false
+	_emblem_panel.visible = _emblem_texture != null
 
 	_overlay_rect.texture = _overlay_texture
 	_overlay_rect.visible = _overlay_texture != null
@@ -552,11 +541,16 @@ func _apply_button_style(button: Button) -> void:
 func _make_panel_style(texture: Texture2D) -> StyleBox:
 	if texture == null:
 		var fallback := StyleBoxFlat.new()
-		fallback.bg_color = Color(0.16, 0.12, 0.08, 0.96)
-		fallback.corner_radius_top_left = 10
-		fallback.corner_radius_top_right = 10
-		fallback.corner_radius_bottom_right = 10
-		fallback.corner_radius_bottom_left = 10
+		fallback.bg_color = Color(0.07, 0.08, 0.10, 0.86)
+		fallback.border_color = Color(0.55, 0.47, 0.31, 0.92)
+		fallback.border_width_left = 2
+		fallback.border_width_top = 2
+		fallback.border_width_right = 2
+		fallback.border_width_bottom = 2
+		fallback.corner_radius_top_left = 12
+		fallback.corner_radius_top_right = 12
+		fallback.corner_radius_bottom_right = 12
+		fallback.corner_radius_bottom_left = 12
 		fallback.content_margin_left = 10
 		fallback.content_margin_right = 10
 		fallback.content_margin_top = 10
@@ -592,7 +586,12 @@ func _make_panel_style(texture: Texture2D) -> StyleBox:
 func _make_inset_style(texture: Texture2D) -> StyleBox:
 	if texture == null:
 		var fallback := StyleBoxFlat.new()
-		fallback.bg_color = Color(0.10, 0.08, 0.05, 0.92)
+		fallback.bg_color = Color(0.10, 0.11, 0.13, 0.84)
+		fallback.border_color = Color(0.44, 0.37, 0.25, 0.84)
+		fallback.border_width_left = 2
+		fallback.border_width_top = 2
+		fallback.border_width_right = 2
+		fallback.border_width_bottom = 2
 		fallback.corner_radius_top_left = 8
 		fallback.corner_radius_top_right = 8
 		fallback.corner_radius_bottom_right = 8
@@ -632,7 +631,12 @@ func _make_inset_style(texture: Texture2D) -> StyleBox:
 func _make_button_style(texture: Texture2D) -> StyleBox:
 	if texture == null:
 		var fallback := StyleBoxFlat.new()
-		fallback.bg_color = Color(0.30, 0.20, 0.10, 1.0)
+		fallback.bg_color = Color(0.15, 0.12, 0.09, 0.96)
+		fallback.border_color = Color(0.63, 0.53, 0.33, 0.98)
+		fallback.border_width_left = 2
+		fallback.border_width_top = 2
+		fallback.border_width_right = 2
+		fallback.border_width_bottom = 2
 		fallback.corner_radius_top_left = 8
 		fallback.corner_radius_top_right = 8
 		fallback.corner_radius_bottom_right = 8
