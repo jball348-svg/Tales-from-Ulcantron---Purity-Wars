@@ -75,12 +75,11 @@ func _ready() -> void:
 
 	if not get_viewport().size_changed.is_connected(_on_viewport_size_changed):
 		get_viewport().size_changed.connect(_on_viewport_size_changed)
+	_on_viewport_size_changed()
 
 	var screen_fader = SceneManager.get_screen_fader()
 	if screen_fader != null:
 		screen_fader.clear_immediately()
-
-	AudioManager.play_music(str(_config.get("music_cue", AudioManager.CUE_VICTORY_EXIT)))
 
 func _unhandled_input(event: InputEvent) -> void:
 	if _overwrite_panel.visible and event.is_action_pressed("ui_cancel"):
@@ -88,6 +87,7 @@ func _unhandled_input(event: InputEvent) -> void:
 		_hide_overwrite_panel()
 
 func _on_viewport_size_changed() -> void:
+	size = get_viewport_rect().size
 	_layout_for_viewport()
 
 func _build_ui() -> void:
@@ -96,7 +96,17 @@ func _build_ui() -> void:
 	_background_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	_background_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	_background_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_background_rect.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
 	add_child(_background_rect)
+
+	_overlay_rect = TextureRect.new()
+	_overlay_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_overlay_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_overlay_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	_overlay_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_overlay_rect.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS
+	_overlay_rect.visible = false
+	add_child(_overlay_rect)
 
 	_sky_band = ColorRect.new()
 	_sky_band.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -113,14 +123,6 @@ func _build_ui() -> void:
 	_ground_band.color = Color(0.17, 0.13, 0.10, 0.96)
 	add_child(_ground_band)
 
-	_overlay_rect = TextureRect.new()
-	_overlay_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
-	_overlay_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	_overlay_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-	_overlay_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_overlay_rect.visible = false
-	add_child(_overlay_rect)
-
 	var center := CenterContainer.new()
 	center.set_anchors_preset(Control.PRESET_FULL_RECT)
 	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -128,8 +130,21 @@ func _build_ui() -> void:
 
 	_frame = PanelContainer.new()
 	_frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_frame.add_theme_stylebox_override("panel", _make_panel_style(_panel_texture))
+	_frame.add_theme_stylebox_override("panel", _make_panel_style(_panel_texture, false))
 	center.add_child(_frame)
+	
+	# Add a smooth semi-transparent backing for readability (replaces the pixelated 9-slice center)
+	var backing := Panel.new()
+	var backing_style := StyleBoxFlat.new()
+	backing_style.bg_color = Color(0, 0, 0, 0.5)
+	backing_style.corner_radius_top_left = 8
+	backing_style.corner_radius_top_right = 8
+	backing_style.corner_radius_bottom_right = 8
+	backing_style.corner_radius_bottom_left = 8
+	backing.add_theme_stylebox_override("panel", backing_style)
+	backing.set_anchors_preset(Control.PRESET_FULL_RECT)
+	backing.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_frame.add_child(backing)
 
 	var frame_margin := MarginContainer.new()
 	frame_margin.add_theme_constant_override("margin_left", 14)
@@ -151,7 +166,7 @@ func _build_ui() -> void:
 
 	var title_column := VBoxContainer.new()
 	title_column.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	title_column.add_theme_constant_override("separation", 6)
+	title_column.add_theme_constant_override("separation", 0)
 	_hero_row.add_child(title_column)
 
 	_logo_rect = TextureRect.new()
@@ -164,6 +179,9 @@ func _build_ui() -> void:
 	_title_label.text = str(_config.get("title", DEFAULT_CONFIG["title"]))
 	_title_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_title_label.add_theme_color_override("font_shadow_color", Color.BLACK)
+	_title_label.add_theme_constant_override("shadow_offset_x", 2)
+	_title_label.add_theme_constant_override("shadow_offset_y", 2)
 	title_column.add_child(_title_label)
 
 	_subtitle_label = Label.new()
@@ -171,6 +189,9 @@ func _build_ui() -> void:
 	_subtitle_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_subtitle_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_subtitle_label.modulate = Color(0.88, 0.82, 0.70, 1.0)
+	_subtitle_label.add_theme_color_override("font_shadow_color", Color.BLACK)
+	_subtitle_label.add_theme_constant_override("shadow_offset_x", 1)
+	_subtitle_label.add_theme_constant_override("shadow_offset_y", 1)
 	title_column.add_child(_subtitle_label)
 
 	_emblem_panel = PanelContainer.new()
@@ -367,14 +388,18 @@ func _apply_asset_slots() -> void:
 
 	_overlay_rect.texture = _overlay_texture
 	_overlay_rect.visible = _overlay_texture != null
+	_overlay_rect.modulate.a = 0.6 # Make it subtle to show background through it
 	_update_background_layer_treatment()
 
 func _update_background_layer_treatment() -> void:
 	var has_background := _background_texture != null
+	_sky_band.visible = not has_background
+	_fog_band.visible = not has_background
+	_ground_band.visible = not has_background
+	
 	if has_background:
-		_sky_band.color = Color(0.07, 0.08, 0.10, 0.18)
-		_fog_band.color = Color(0.25, 0.24, 0.28, 0.24)
-		_ground_band.color = Color(0.14, 0.11, 0.09, 0.32)
+		# Use very low alpha if we want them as tints, or just keep them hidden
+		pass
 	else:
 		_sky_band.color = Color(0.10, 0.11, 0.16, 1.0)
 		_fog_band.color = Color(0.20, 0.19, 0.23, 0.54)
@@ -521,15 +546,30 @@ func _load_texture_if_exists(resource_path: String) -> Texture2D:
 	return _load_texture(resource_path)
 
 func _load_texture(resource_path: String) -> Texture2D:
-	if ResourceLoader.exists(resource_path, "Texture2D") or ResourceLoader.exists(resource_path):
-		var texture := load(resource_path)
-		if texture is Texture2D:
-			return texture as Texture2D
-
-	var image := Image.load_from_file(ProjectSettings.globalize_path(resource_path))
-	if image == null or image.is_empty():
-		return null
-	return ImageTexture.create_from_image(image)
+	if resource_path.begins_with("res://"):
+		if ResourceLoader.exists(resource_path, "Texture2D"):
+			var texture := load(resource_path)
+			if texture is Texture2D:
+				return texture as Texture2D
+	
+	var global_path := ProjectSettings.globalize_path(resource_path)
+	if FileAccess.file_exists(global_path):
+		var image = Image.load_from_file(global_path)
+		if image == null:
+			print("IMAGE LOAD FROM FILE FAILED: ", global_path)
+			# Fallback to standard load()
+			var tex = load(resource_path)
+			if tex is Texture2D:
+				print("FALLBACK LOAD SUCCESSFUL: ", resource_path)
+				return tex
+			return null
+		
+		print("SUCCESSFULLY LOADED IMAGE VIA FILEACCESS: ", resource_path)
+		return ImageTexture.create_from_image(image)
+	else:
+		print("FILE NOT FOUND VIA FILEACCESS: ", global_path)
+	
+	return null
 
 func _apply_button_style(button: Button) -> void:
 	button.add_theme_stylebox_override("normal", _make_button_style(_button_texture))
@@ -538,10 +578,10 @@ func _apply_button_style(button: Button) -> void:
 	button.add_theme_stylebox_override("disabled", _make_button_style(_button_disabled_texture if _button_disabled_texture != null else _button_texture))
 	button.add_theme_stylebox_override("focus", _make_button_style(_button_pressed_texture if _button_pressed_texture != null else _button_texture))
 
-func _make_panel_style(texture: Texture2D) -> StyleBox:
+func _make_panel_style(texture: Texture2D, draw_center: bool = true) -> StyleBox:
 	if texture == null:
 		var fallback := StyleBoxFlat.new()
-		fallback.bg_color = Color(0.07, 0.08, 0.10, 0.86)
+		fallback.bg_color = Color(0.07, 0.08, 0.10, 0.86 if draw_center else 0.0)
 		fallback.border_color = Color(0.55, 0.47, 0.31, 0.92)
 		fallback.border_width_left = 2
 		fallback.border_width_top = 2
@@ -559,15 +599,17 @@ func _make_panel_style(texture: Texture2D) -> StyleBox:
 
 	var style := StyleBoxTexture.new()
 	style.texture = texture
+	style.draw_center = draw_center
 	if _is_proprietary_title_ui_texture(texture):
-		style.texture_margin_left = 48
-		style.texture_margin_top = 36
-		style.texture_margin_right = 48
-		style.texture_margin_bottom = 36
-		style.content_margin_left = 14
-		style.content_margin_right = 14
-		style.content_margin_top = 12
-		style.content_margin_bottom = 12
+		# Using smaller fixed margins to ensure the center (where background is visible) is as large as possible
+		style.texture_margin_left = 40
+		style.texture_margin_top = 40
+		style.texture_margin_right = 40
+		style.texture_margin_bottom = 40
+		style.content_margin_left = 24
+		style.content_margin_right = 24
+		style.content_margin_top = 20
+		style.content_margin_bottom = 20
 		style.axis_stretch_horizontal = StyleBoxTexture.AXIS_STRETCH_MODE_STRETCH
 		style.axis_stretch_vertical = StyleBoxTexture.AXIS_STRETCH_MODE_STRETCH
 	else:
@@ -583,10 +625,10 @@ func _make_panel_style(texture: Texture2D) -> StyleBox:
 		style.axis_stretch_vertical = StyleBoxTexture.AXIS_STRETCH_MODE_TILE_FIT
 	return style
 
-func _make_inset_style(texture: Texture2D) -> StyleBox:
+func _make_inset_style(texture: Texture2D, draw_center: bool = true) -> StyleBox:
 	if texture == null:
 		var fallback := StyleBoxFlat.new()
-		fallback.bg_color = Color(0.10, 0.11, 0.13, 0.84)
+		fallback.bg_color = Color(0.10, 0.11, 0.13, 0.84 if draw_center else 0.0)
 		fallback.border_color = Color(0.44, 0.37, 0.25, 0.84)
 		fallback.border_width_left = 2
 		fallback.border_width_top = 2
@@ -604,15 +646,16 @@ func _make_inset_style(texture: Texture2D) -> StyleBox:
 
 	var style := StyleBoxTexture.new()
 	style.texture = texture
+	style.draw_center = draw_center
 	if _is_proprietary_title_ui_texture(texture):
-		style.texture_margin_left = 26
-		style.texture_margin_top = 24
-		style.texture_margin_right = 26
-		style.texture_margin_bottom = 24
-		style.content_margin_left = 10
-		style.content_margin_right = 10
-		style.content_margin_top = 8
-		style.content_margin_bottom = 8
+		style.texture_margin_left = texture.get_width() * 0.12
+		style.texture_margin_top = texture.get_height() * 0.12
+		style.texture_margin_right = texture.get_width() * 0.12
+		style.texture_margin_bottom = texture.get_height() * 0.12
+		style.content_margin_left = 12
+		style.content_margin_right = 12
+		style.content_margin_top = 10
+		style.content_margin_bottom = 10
 		style.axis_stretch_horizontal = StyleBoxTexture.AXIS_STRETCH_MODE_STRETCH
 		style.axis_stretch_vertical = StyleBoxTexture.AXIS_STRETCH_MODE_STRETCH
 	else:
@@ -628,10 +671,10 @@ func _make_inset_style(texture: Texture2D) -> StyleBox:
 		style.axis_stretch_vertical = StyleBoxTexture.AXIS_STRETCH_MODE_TILE_FIT
 	return style
 
-func _make_button_style(texture: Texture2D) -> StyleBox:
+func _make_button_style(texture: Texture2D, draw_center: bool = true) -> StyleBox:
 	if texture == null:
 		var fallback := StyleBoxFlat.new()
-		fallback.bg_color = Color(0.15, 0.12, 0.09, 0.96)
+		fallback.bg_color = Color(0.15, 0.12, 0.09, 0.96 if draw_center else 0.0)
 		fallback.border_color = Color(0.63, 0.53, 0.33, 0.98)
 		fallback.border_width_left = 2
 		fallback.border_width_top = 2
@@ -649,15 +692,16 @@ func _make_button_style(texture: Texture2D) -> StyleBox:
 
 	var style := StyleBoxTexture.new()
 	style.texture = texture
+	style.draw_center = draw_center
 	if _is_proprietary_title_ui_texture(texture):
-		style.texture_margin_left = 32
-		style.texture_margin_top = 22
-		style.texture_margin_right = 32
-		style.texture_margin_bottom = 22
-		style.content_margin_left = 14
-		style.content_margin_right = 14
-		style.content_margin_top = 8
-		style.content_margin_bottom = 8
+		style.texture_margin_left = texture.get_width() * 0.1
+		style.texture_margin_top = texture.get_height() * 0.1
+		style.texture_margin_right = texture.get_width() * 0.1
+		style.texture_margin_bottom = texture.get_height() * 0.1
+		style.content_margin_left = 16
+		style.content_margin_right = 16
+		style.content_margin_top = 10
+		style.content_margin_bottom = 10
 		style.axis_stretch_horizontal = StyleBoxTexture.AXIS_STRETCH_MODE_STRETCH
 		style.axis_stretch_vertical = StyleBoxTexture.AXIS_STRETCH_MODE_STRETCH
 	else:

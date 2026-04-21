@@ -1,22 +1,21 @@
-import glob
 import os
-from rembg import remove
 from PIL import Image
 
-def process_with_rembg(filepath):
-    print("rembg processing", filepath)
+def crop_image(filepath):
+    print(f"Cropping {filepath}")
     try:
-        input_image = Image.open(filepath).convert("RGBA")
-        output_image = remove(input_image)
-        bbox = output_image.getbbox()
+        img = Image.open(filepath).convert("RGBA")
+        bbox = img.getbbox()
         if bbox:
-            output_image = output_image.crop(bbox)
-        output_image.save(filepath)
-        print("Successfully processed, cropped, and saved", filepath)
+            cropped = img.crop(bbox)
+            cropped.save(filepath)
+            print(f"  New size: {cropped.size}")
+        else:
+            print(f"  Image is empty, skipping.")
     except Exception as e:
-        print("Error processing", filepath, e)
+        print(f"  Error: {e}")
 
-files_to_fix = [
+files = [
     "assets/proprietary/production/title/title_logo_plate_v01.png",
     "assets/proprietary/production/title/title_emblem_frontier_v01.png",
     "assets/proprietary/production/ui/ui_title_panel_v01.png",
@@ -25,8 +24,8 @@ files_to_fix = [
     "assets/proprietary/production/ui/ui_title_button_pressed_v01.png"
 ]
 
-for f in files_to_fix:
+for f in files:
     if os.path.exists(f):
-        process_with_rembg(f)
+        crop_image(f)
     else:
         print(f"File not found: {f}")
