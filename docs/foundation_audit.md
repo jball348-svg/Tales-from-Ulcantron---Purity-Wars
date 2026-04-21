@@ -2836,8 +2836,8 @@ Categories: `KEEP`, `REFACTOR`, `DELETE`, `REVIEW`. This audit captures the pre-
 
 ## Foundation Pass Result
 
-- Deleted files: Pending implementation.
-- Refactored files: Pending implementation.
-- Dialogue/data externalization: Pending implementation.
+- Deleted files: 1,141 tracked files removed from the live production surface, primarily Godot cache state, OS cruft, placeholder markers, and retired debug/scaffold files.
+- Refactored files: 108 files modified, added, or relocated to establish the production baseline and archive the completed slice history.
+- Dialogue/data externalization: `intel_npc`, `moral_choice_npc`, `bookstore_npc`, `shaman_intro_cutscene`, `shaman_recruit_resolution`, and `crossroads_signpost` now load from JSON files in `data/dialogue/`.
 - REVIEW items: None recorded in the initial audit pass.
-- Headless validation: Pending implementation.
+- Headless validation: `C:\Users\johnf\Downloads\Godot_v4.6.2-stable_win64.exe\Godot_v4.6.2-stable_win64_console.exe --headless --path . --quit-after 4` passes with zero warnings and zero errors.
