@@ -101,6 +101,12 @@ func apply_save_data(save_data: Variant) -> void:
 	_recalculate_luck()
 	_emit_stat_refresh()
 
+func reset_to_defaults() -> void:
+	stats = DEFAULT_STATS.duplicate(true)
+	temp_modifiers.clear()
+	_recalculate_luck()
+	_emit_stat_refresh()
+
 # Called whenever any action signal fires.
 func _on_action_performed(payload: Dictionary) -> void:
 	var action_type: String = payload.get("type", "")

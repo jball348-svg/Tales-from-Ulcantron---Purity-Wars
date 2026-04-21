@@ -16,6 +16,11 @@ const DEFAULT_LEVEL := 1
 const DEFAULT_XP := 0
 const DEFAULT_XP_TO_NEXT_LEVEL := 100
 const DEFAULT_UNSPENT_STAT_POINTS := 0
+const DEFAULT_LOCATION := "starting_town"
+const DEFAULT_REGION := "frontier_village"
+const DEFAULT_GOLD := 0
+const DEFAULT_AGE_YEARS := 20
+const DEFAULT_AGE_DAYS := 0
 const DEFAULT_EQUIPMENT := {
 	"head":    "",
 	"chest":   "",
@@ -49,11 +54,11 @@ var flags: Dictionary = {}
 var ghost_flags: Dictionary = {}
 
 # --- Location ---
-var current_location: String = "town_start"
-var current_region: String   = "starting_region"
+var current_location: String = DEFAULT_LOCATION
+var current_region: String   = DEFAULT_REGION
 
 # --- Inventory (sketch — expand in production) ---
-var gold: int          = 0
+var gold: int          = DEFAULT_GOLD
 var inventory: Array   = []   # Array of item Dictionaries
 var equipment: Dictionary = DEFAULT_EQUIPMENT.duplicate(true)
 var level: int = DEFAULT_LEVEL
@@ -63,8 +68,8 @@ var unspent_stat_points: int = DEFAULT_UNSPENT_STAT_POINTS
 
 # --- Age ---
 # Tracked separately — it's both a stat and a narrative device.
-var age_years: int  = 20
-var age_days: int   = 0
+var age_years: int  = DEFAULT_AGE_YEARS
+var age_days: int   = DEFAULT_AGE_DAYS
 var current_hp: int = 0
 
 func _ready() -> void:
@@ -144,6 +149,28 @@ func apply_save_data(save_data: Variant) -> void:
 	age_days = clampi(int(player_data.get("age_days", 0)), 0, 364)
 	set_current_hp(int(player_data.get("current_hp", get_max_hp())))
 	_restore_progression(player_data.get("progression", {}))
+
+func reset_to_defaults() -> void:
+	chosen_class = ""
+	chosen_path = ""
+	specialisation = ""
+	mixed_classes = []
+	flags = {}
+	ghost_flags = {}
+	current_location = DEFAULT_LOCATION
+	current_region = DEFAULT_REGION
+	gold = DEFAULT_GOLD
+	inventory = []
+	equipment = DEFAULT_EQUIPMENT.duplicate(true)
+	level = DEFAULT_LEVEL
+	xp = DEFAULT_XP
+	xp_to_next_level = DEFAULT_XP_TO_NEXT_LEVEL
+	unspent_stat_points = DEFAULT_UNSPENT_STAT_POINTS
+	age_years = DEFAULT_AGE_YEARS
+	age_days = DEFAULT_AGE_DAYS
+	current_hp = 0
+	ensure_profile_defaults()
+	restore_hp_full()
 
 func _duplicate_dictionary(value: Variant) -> Dictionary:
 	if value is Dictionary:

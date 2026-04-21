@@ -20,6 +20,7 @@ Tales from Ulcantron: Purity Wars is a 2D top-down narrative RPG in Godot 4. The
 
 ## Proven Production-Ready Systems
 
+- `scenes/title/TitleScreen.tscn` is now the boot entry state and provides the current intro/title scaffold with config-driven asset slots.
 - `SceneManager.gd` now routes map play into authored location scenes instead of a single mutable map scene.
 - `scenes/map/Map.gd` is a shared controller for exploration, triggers, return context, and mine progression logic only. Runtime tile painting and scripted collision building have been removed.
 - `autoloads/DialogueManager.gd` loads dialogue from JSON files in `data/dialogue/` and no longer hardcodes dialogue trees in the autoload.
@@ -28,6 +29,7 @@ Tales from Ulcantron: Purity Wars is a 2D top-down narrative RPG in Godot 4. The
 - `Battle.gd` supports the production slice battle loop without the old placeholder boss branch.
 - `AudioManager.gd` and `ActorVisuals.gd` remain the shared presentation layers for music, SFX, portraits, map sprites, battle art, and follower visuals.
 - Save/load flow is live and keeps return-region, return-location, trigger suppression, and resume position context.
+- `SaveManager.start_new_game()` is the canonical fresh-start path and resets player, stat, and clock state before entering Frontier Hamlet.
 
 ## Current Slice Truth
 
@@ -44,7 +46,9 @@ The baseline loop is:
 
 Current gameplay facts that remain true:
 
-- Fresh boot defaults to the Pure/Fighter profile if no save exists.
+- Fresh boot now always opens the title screen first.
+- `New Game` defaults to the Pure/Fighter profile and enters Frontier Hamlet after an overwrite confirmation when a save exists.
+- `Continue` is only exposed when a save exists and loads directly into the saved map state.
 - Mixed/Battlemage remains supported through save data and current player-path state.
 - The bookstore interaction still sets the dialogue/progression flag path, but it does not yet unlock a new production combat spell.
 - The HUD `Map` tab is still an informational placeholder for a future authored map view.
@@ -72,6 +76,7 @@ scenes/
   ui/               Shared dialogue, prompt, and transition UI
 assets/
   art/              Runtime art plus source-asset organization
+  proprietary/      First-party visual pipeline for concepts, prompts, and production exports
   audio/            Production-facing audio conventions
 docs/               Live handover, audit, and archived planning
 tools/archive/      Archived harnesses and vertical-slice evidence
@@ -81,6 +86,15 @@ Important asset-location note:
 
 - The current locked slice music and SFX still live under `assets/Music/` and `assets/SFX/`.
 - The new `assets/audio/` directories define the production convention for future content without forcing a risky asset migration during the foundation pass.
+- `assets/proprietary/` is the future first-party art workspace. Leave current `assets/art/` placeholders in place until documented replacements are ready to wire in.
+
+### Visual Asset Pipeline
+
+- Start with `docs/visual_asset_handover.md` for the current visual-language audit and replacement rules.
+- Use `docs/asset_registry.md` as the single backlog tracker for visual asset replacement status.
+- Use `docs/intro_scene_art_brief.md` for the current title/intro art scope and immediate next proprietary art targets.
+- Keep concept work in `assets/proprietary/concepts/`, prompt/reference source in `assets/proprietary/source_prompts/` and `assets/proprietary/references/`, and runtime-ready exports in `assets/proprietary/production/`.
+- Do not migrate or delete placeholder runtime art until the replacement asset, config path, and registry entry are ready together.
 
 ### Dialogue Data
 

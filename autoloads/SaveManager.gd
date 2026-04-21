@@ -2,6 +2,8 @@ extends Node
 
 const SAVE_PATH := "user://save_game.json"
 const SAVE_VERSION := 1
+const FRONTIER_START_REGION := "frontier_village"
+const FRONTIER_START_LOCATION := "starting_town"
 
 var _is_loading := false
 
@@ -68,6 +70,34 @@ func load_game() -> bool:
 
 	return true
 
+func start_new_game() -> bool:
+	if has_save() and not delete_save():
+		push_warning("SaveManager: failed to delete old save before starting a new game. Continuing with overwrite flow.")
+
+	_is_loading = true
+	StatRegistry.reset_to_defaults()
+	GameClock.reset_to_defaults()
+	PlayerData.reset_to_defaults()
+	PlayerData.current_region = FRONTIER_START_REGION
+	PlayerData.current_location = FRONTIER_START_LOCATION
+	SceneManager.clear_state_payload()
+	var started := SceneManager.change_state("map", {
+		"source": "new_game",
+		"return_region": FRONTIER_START_REGION,
+		"return_location": FRONTIER_START_LOCATION,
+		"return_position": Vector2.ZERO,
+		"suppressed_trigger_type": "",
+		"suppressed_trigger_index": -1,
+		"fade_from_black": true,
+	}, true)
+	_is_loading = false
+
+	if not started:
+		push_warning("SaveManager: failed to enter map state for a new game.")
+		return false
+
+	return true
+
 func _on_state_changed(_from_state: String, to_state: String) -> void:
 	if _is_loading or to_state != "map":
 		return
@@ -129,6 +159,7 @@ func _build_world_payload(world_data: Variant) -> Dictionary:
 		"return_position": normalized["position"],
 		"suppressed_trigger_type": normalized["suppressed_trigger_type"],
 		"suppressed_trigger_index": normalized["suppressed_trigger_index"],
+		"fade_from_black": true,
 	}
 
 func _vector2_to_save_data(value: Vector2) -> Dictionary:

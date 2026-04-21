@@ -52,6 +52,14 @@ func apply_save_data(save_data: Variant) -> void:
 	_accumulator = 0.0
 	SignalBus.clock_ticked.emit(get_time())
 
+func reset_to_defaults() -> void:
+	in_game_day = DEFAULT_DAY
+	in_game_hour = DEFAULT_HOUR
+	in_game_minute = DEFAULT_MINUTE
+	speed_multiplier = DEFAULT_SPEED_MULTIPLIER
+	_accumulator = 0.0
+	SignalBus.clock_ticked.emit(get_time())
+
 func _process(delta: float) -> void:
 	_accumulator += delta * speed_multiplier
 

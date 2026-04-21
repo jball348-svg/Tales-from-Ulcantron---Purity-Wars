@@ -14,6 +14,7 @@ A Godot 4 narrative RPG now carrying a completed vertical slice and a completed 
 
 ## What Is Production-Ready
 
+- A title-first boot flow with a scaffolded menu state for future intro/title art
 - Authored exploration scenes for Frontier Hamlet, Kobold Mine, and Crossroads
 - Scene-based collision and trigger flow, without runtime tile generation or dynamic collision builders
 - JSON-backed dialogue loading through `data/dialogue/`
@@ -52,13 +53,15 @@ Current asset-location note:
 
 - Locked slice music and SFX still live under `assets/Music/` and `assets/SFX/`.
 - `assets/audio/` exists as the production-facing directory convention for future content migration.
+- `assets/proprietary/` is now the source-of-truth folder for future first-party art concepts, prompts, source files, and runtime-ready exports.
 
 ## Run
 
 1. Open the project in Godot 4.6 or newer.
 2. Run `scenes/main/Main.tscn`, or launch the project normally.
-3. If `user://save_game.json` exists, the game resumes from save.
-4. If no save exists, the project starts from Frontier Hamlet using the default Pure/Fighter profile.
+3. The project now boots to the title screen first, regardless of save presence.
+4. `Continue` appears only if `user://save_game.json` exists and resumes from save.
+5. `New Game` starts a fresh Pure/Fighter run in Frontier Hamlet and overwrites the current save only after confirmation.
 
 ## Controls
 
@@ -70,6 +73,9 @@ Current asset-location note:
 ## Key Docs
 
 - `docs/HANDOVER.md`
+- `docs/visual_asset_handover.md`
+- `docs/asset_registry.md`
+- `docs/intro_scene_art_brief.md`
 - `docs/foundation_audit.md`
 - `docs/vertical_slice_plan.md`
 - `docs/archive/vertical_slice/`

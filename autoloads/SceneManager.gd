@@ -7,6 +7,7 @@ const CROSSROADS_REGION := "crossroads_region"
 const STATE_SCENES: Dictionary = {
 	"battle": "res://scenes/battle/Battle.tscn",
 	"cutscene": "res://scenes/cutscene/Cutscene.tscn",
+	"title": "res://scenes/title/TitleScreen.tscn",
 }
 
 const MAP_SCENES_BY_REGION := {

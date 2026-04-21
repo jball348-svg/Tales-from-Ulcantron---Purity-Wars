@@ -14,12 +14,7 @@ func _ready() -> void:
 	_ensure_dialogue_box()
 	_ensure_prompt_modal()
 	_ensure_screen_fader()
-	if SaveManager.has_save():
-		if not SaveManager.load_game():
-			SceneManager.change_state("map")
-		return
-
-	SceneManager.change_state("map")
+	SceneManager.change_state("title")
 
 func _ensure_hud() -> void:
 	if overlay_host.get_node_or_null("HUD") != null:
