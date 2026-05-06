@@ -81,8 +81,35 @@ func start_new_game() -> bool:
 	PlayerData.current_region = FRONTIER_START_REGION
 	PlayerData.current_location = FRONTIER_START_LOCATION
 	SceneManager.clear_state_payload()
-	var started := SceneManager.change_state("map", {
+	# New games now route through the prologue. No save is committed until the
+	# player completes character creation; quitting mid-prologue replays it on
+	# the next New Game.
+	var started := SceneManager.change_state("prologue_intro", {
 		"source": "new_game",
+		"fade_from_black": true,
+	}, true)
+	_is_loading = false
+
+	if not started:
+		push_warning("SaveManager: failed to enter prologue_intro for a new game.")
+		return false
+
+	return true
+
+func commit_first_save(character_payload: Dictionary = {}) -> bool:
+	# Called by the character-creation scene after the prologue completes. Applies
+	# the player's character choices, marks the prologue as completed, and routes
+	# into Frontier Hamlet — the autosave-on-map-entry creates the actual save
+	# file once the map scene loads.
+	var path := str(character_payload.get("path", "pure"))
+	if PlayerData.VALID_PATHS.has(path):
+		PlayerData.set_profile_path(path)
+	PlayerData.set_flag("prologue_completed", true)
+	PlayerData.current_region = FRONTIER_START_REGION
+	PlayerData.current_location = FRONTIER_START_LOCATION
+
+	var entered := SceneManager.change_state("map", {
+		"source": "new_game_post_prologue",
 		"return_region": FRONTIER_START_REGION,
 		"return_location": FRONTIER_START_LOCATION,
 		"return_position": Vector2.ZERO,
@@ -90,10 +117,9 @@ func start_new_game() -> bool:
 		"suppressed_trigger_index": -1,
 		"fade_from_black": true,
 	}, true)
-	_is_loading = false
 
-	if not started:
-		push_warning("SaveManager: failed to enter map state for a new game.")
+	if not entered:
+		push_warning("SaveManager: commit_first_save failed to enter map state.")
 		return false
 
 	return true
