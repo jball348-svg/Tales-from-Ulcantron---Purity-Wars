@@ -1,18 +1,21 @@
 {
   "title": "Tales from Ulcantron",
   "subtitle": "Purity Wars",
-  "footer": "A narrative frontier opens in Frontier Hamlet. Continue if a save exists, or begin a new journey.",
+  "footer": "",
   "music_cue": "victory_exit",
+  "menu_layout_mode": "keyart_overlay",
+  "version_text": "Ver. 1.0.0",
+  "copyright_text": "© 2024 Luminaris Games",
   "asset_slots": {
-    "background": "res://assets/proprietary/production/title/title_background_frontier_v01.png",
-    "logo": "res://assets/proprietary/production/title/title_logo_plate_v01.png",
-    "emblem": "res://assets/proprietary/production/title/title_emblem_frontier_v01.png",
-    "overlay": "res://assets/proprietary/production/title/title_atmosphere_overlay_v01.png"
+    "background": "res://assets/proprietary/production/title/title_keyart_purity_wars_v01.png",
+    "logo": "",
+    "emblem": "",
+    "overlay": ""
   },
   "ui_slots": {
-    "panel": "res://assets/proprietary/production/ui/ui_title_panel_v01.png",
-    "inset": "res://assets/proprietary/production/ui/ui_title_inset_v01.png",
-    "button": "res://assets/proprietary/production/ui/ui_title_button_v01.png",
-    "button_pressed": "res://assets/proprietary/production/ui/ui_title_button_pressed_v01.png"
+    "panel": "",
+    "inset": "",
+    "button": "",
+    "button_pressed": ""
   }
 }

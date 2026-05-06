@@ -45,3 +45,35 @@ These are first-pass proprietary assets, not final locked production masters.
 - Replace the title screen typography with a production-ready font stack or bitmap font treatment that matches the new art package
 - Extend the same proprietary language into the opening-area environment reference art for Frontier Hamlet
 - Begin player identity-anchor work so the title-screen look and opening-world look do not drift apart
+
+## v02 — Key Art Drop
+
+This second pass replaces the layered v01 frontier composition with a single full-canvas key art delivered through GPT Image 2.
+
+### What Shipped
+
+- Full-canvas painted key art: caped hero overlooking a violet-lit fortress under a corona, painted title lockup at upper left, painted menu column at left-of-centre, painted copyright + version markings in the bottom corners
+- Title-screen runtime support for a `menu_layout_mode = "keyart_overlay"` configuration that suppresses every legacy chrome layer
+- Six-item interactive menu (New Game, Continue, Load Game, Options, Extras, Quit Game) overlaid on the painted menu column with dark button bands that cover the painted text and brighten on hover/focus
+- Live `Ver. 1.0.0` and `© 2024 Luminaris Games` corner labels rendered over the painted markings so version metadata can change without re-exporting the canvas
+- Stub handlers for Load Game (mirrors Continue while a single save slot is the only persistence layer), Options, and Extras (status-line "Coming soon")
+
+### Runtime Asset Location
+
+- `assets/proprietary/production/title/title_keyart_purity_wars_v01.png`
+- Prompt / source notes: `assets/proprietary/source_prompts/title_keyart_pass_v02.md`
+
+### Behavior In `keyart_overlay` Mode
+
+- `asset_slots.background` points at the key art; `logo`, `emblem`, `overlay` are intentionally blanked
+- `ui_slots.panel`, `inset`, `button`, `button_pressed` are intentionally blanked so no chrome textures are drawn over the artwork
+- The script auto-detects keyart mode if a background is configured without a logo or panel, so a future plain-background drop can also use this layout without setting the explicit mode flag
+- Default focus is `New Game` (matching the painted highlight in the artwork). `Continue` only appears when a save exists; `Load Game` mirrors Continue's enable state until a multi-slot selector exists
+
+### Follow-Up
+
+- Refine the keyart-button styling once a real font/typography pass lands so the runtime menu matches the painted lettering more tightly
+- Replace the Load Game stub with a save-selector screen when multiple slots are introduced
+- Build out the Options and Extras screens (audio sliders, controls, credits, gallery)
+- Re-export the painted version label from the key art if marketing requires the visible version to track the build
+- Re-evaluate whether the painted menu text should be cropped or blurred out of the canvas master so the runtime buttons can use lighter / more transparent bands

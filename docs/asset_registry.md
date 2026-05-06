@@ -10,6 +10,7 @@ This file is the single backlog tracker for art replacement status. Update it wh
 - `Missing`
 - `Planned Proprietary`
 - `Replaced`
+- `Suspended` — proprietary asset preserved on disk but not currently wired through config; kept as a restorable fallback
 
 ## Registry
 
@@ -31,13 +32,14 @@ This file is the single backlog tracker for art replacement status. Update it wh
 | Environment | Kobold Mine environment visuals | Programmatic Placeholder | Scene-authored polygons and color blocking | Medium | No | Preserve dark readability and strong lane clarity | `scenes/map/KoboldMine.tscn` |
 | Environment | Crossroads environment visuals | Programmatic Placeholder | Scene-authored polygons and color blocking | Medium | Maybe | Preserve horizon, road, and signpost readability | `scenes/map/Crossroads.tscn` |
 | Branding | App icon | Generated Placeholder | `assets/art/generated/stage_8_5/map_fighter.png` | Medium | Yes | Should eventually align with title branding and proprietary identity | `project.godot` |
-| Branding | Title logo slot | Replaced | `assets/proprietary/production/title/title_logo_plate_v01.png` | Highest | Yes | Decorative hybrid lockup plate only; exact title and subtitle text remain live in-engine for readability | `data/ui/title_screen_config.json`, `scenes/title/TitleScreen.gd` |
-| Branding | Title background slot | Replaced | `assets/proprietary/production/title/title_background_frontier_v01.png` | Highest | Yes | Frontier-first matte with centered menu-safe readability; runtime still falls back to layered bands if missing | `data/ui/title_screen_config.json`, `scenes/title/TitleScreen.gd` |
-| Branding | Title emblem slot | Replaced | `assets/proprietary/production/title/title_emblem_frontier_v01.png` | High | Yes | Neutral frontier crest sized for the existing emblem slot; keeps branding symbolic rather than character-led | `data/ui/title_screen_config.json`, `scenes/title/TitleScreen.gd` |
-| Overlay | Title atmosphere overlay | Replaced | `assets/proprietary/production/title/title_atmosphere_overlay_v01.png` | High | Yes | Full-frame mood layer; must stay subtle enough that menu text remains readable | `data/ui/title_screen_config.json`, `scenes/title/TitleScreen.gd` |
-| UI Skin | Title panel chrome | Replaced | `assets/proprietary/production/ui/ui_title_panel_v01.png` | High | Yes | Title-only outer frame for the main title panel and overwrite panel; shared gameplay UI remains placeholder | `data/ui/title_screen_config.json`, `scenes/title/TitleScreen.gd` |
-| UI Skin | Title inset chrome | Replaced | `assets/proprietary/production/ui/ui_title_inset_v01.png` | High | Yes | Used for emblem and action sections inside the title frame; tuned for low-resolution stretch use | `data/ui/title_screen_config.json`, `scenes/title/TitleScreen.gd` |
-| UI Skin | Title button chrome | Replaced | `assets/proprietary/production/ui/ui_title_button_v01.png`, `assets/proprietary/production/ui/ui_title_button_pressed_v01.png` | High | Yes | Title-only button family with live text and pressed-state support; disabled state still falls back to Kenney grey | `data/ui/title_screen_config.json`, `scenes/title/TitleScreen.gd` |
+| Branding | Title key art (full composition) | Replaced | `assets/proprietary/production/title/title_keyart_purity_wars_v01.png` | Highest | Yes | Full-canvas key art with painted title lockup, six-item menu column, and corner metadata. Runtime overlays interactive buttons over the painted menu and renders live version + copyright over the bottom corners. Active when `menu_layout_mode = "keyart_overlay"` in config. | `data/ui/title_screen_config.json`, `scenes/title/TitleScreen.gd` |
+| Branding | Title logo slot (v01 frontier) | Suspended | `assets/proprietary/production/title/title_logo_plate_v01.png` | Low | No | Hybrid lockup plate from the v01 frontier pass; suppressed in keyart-overlay mode but kept on disk as a restorable fallback | `data/ui/title_screen_config.json`, `scenes/title/TitleScreen.gd` |
+| Branding | Title background slot (v01 frontier) | Suspended | `assets/proprietary/production/title/title_background_frontier_v01.png` | Low | No | Frontier-first matte from v01; superseded by the v02 key art but preserved as a restorable fallback | `data/ui/title_screen_config.json`, `scenes/title/TitleScreen.gd` |
+| Branding | Title emblem slot (v01 frontier) | Suspended | `assets/proprietary/production/title/title_emblem_frontier_v01.png` | Low | No | Neutral frontier crest from v01; suppressed in keyart-overlay mode | `data/ui/title_screen_config.json`, `scenes/title/TitleScreen.gd` |
+| Overlay | Title atmosphere overlay (v01) | Suspended | `assets/proprietary/production/title/title_atmosphere_overlay_v01.png` | Low | No | Full-frame mood layer from v01; suppressed in keyart-overlay mode (the painted key art carries its own atmosphere) | `data/ui/title_screen_config.json`, `scenes/title/TitleScreen.gd` |
+| UI Skin | Title panel chrome (v01) | Suspended | `assets/proprietary/production/ui/ui_title_panel_v01.png` | Low | No | Title-only outer frame from v01; suppressed in keyart-overlay mode where button bands sit directly over the painted artwork | `data/ui/title_screen_config.json`, `scenes/title/TitleScreen.gd` |
+| UI Skin | Title inset chrome (v01) | Suspended | `assets/proprietary/production/ui/ui_title_inset_v01.png` | Low | No | v01 emblem and actions inset; suppressed in keyart-overlay mode | `data/ui/title_screen_config.json`, `scenes/title/TitleScreen.gd` |
+| UI Skin | Title button chrome (v01) | Suspended | `assets/proprietary/production/ui/ui_title_button_v01.png`, `assets/proprietary/production/ui/ui_title_button_pressed_v01.png` | Low | No | v01 button family; suppressed in keyart-overlay mode in favor of the runtime keyart button style | `data/ui/title_screen_config.json`, `scenes/title/TitleScreen.gd` |
 
 ## Planned Proprietary Targets
 

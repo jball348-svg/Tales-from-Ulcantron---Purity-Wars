@@ -7,11 +7,16 @@ const UI_BUTTON_TEXTURE_PATH := "res://assets/art/UI/kenney_ui-pack-rpg-expansio
 const UI_BUTTON_PRESSED_TEXTURE_PATH := "res://assets/art/UI/kenney_ui-pack-rpg-expansion/PNG/buttonLong_brown_pressed.png"
 const UI_BUTTON_DISABLED_TEXTURE_PATH := "res://assets/art/UI/kenney_ui-pack-rpg-expansion/PNG/buttonLong_grey.png"
 
+const MENU_LAYOUT_KEYART_OVERLAY := "keyart_overlay"
+
 const DEFAULT_CONFIG := {
 	"title": "Tales from Ulcantron",
 	"subtitle": "Purity Wars",
 	"footer": "Begin in Frontier Hamlet. Continue if a save exists, or start a new journey.",
 	"music_cue": AudioManager.CUE_VICTORY_EXIT,
+	"menu_layout_mode": "",
+	"version_text": "",
+	"copyright_text": "",
 	"asset_slots": {
 		"background": "",
 		"logo": "",
@@ -53,6 +58,9 @@ var _emblem_rect: TextureRect
 var _emblem_placeholder: Label
 var _continue_button: Button
 var _new_game_button: Button
+var _load_game_button: Button
+var _options_button: Button
+var _extras_button: Button
 var _quit_button: Button
 var _footer_label: Label
 var _status_label: Label
@@ -61,6 +69,12 @@ var _modal_center: CenterContainer
 var _overwrite_panel: PanelContainer
 var _overwrite_confirm_button: Button
 var _overwrite_cancel_button: Button
+var _frame_backing: Panel
+var _actions_panel: PanelContainer
+var _actions_margin: MarginContainer
+var _copyright_label: Label
+var _version_label: Label
+var _keyart_mode := false
 
 func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -87,7 +101,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		_hide_overwrite_panel()
 
 func _on_viewport_size_changed() -> void:
-	size = get_viewport_rect().size
+	# The root Control auto-sizes via PRESET_FULL_RECT anchors set in _ready.
+	# Manually assigning size here would conflict with the anchor mode and
+	# print a "non-equal opposite anchors" warning.
 	_layout_for_viewport()
 
 func _build_ui() -> void:
@@ -134,17 +150,17 @@ func _build_ui() -> void:
 	center.add_child(_frame)
 	
 	# Add a smooth semi-transparent backing for readability (replaces the pixelated 9-slice center)
-	var backing := Panel.new()
+	_frame_backing = Panel.new()
 	var backing_style := StyleBoxFlat.new()
 	backing_style.bg_color = Color(0, 0, 0, 0.5)
 	backing_style.corner_radius_top_left = 8
 	backing_style.corner_radius_top_right = 8
 	backing_style.corner_radius_bottom_right = 8
 	backing_style.corner_radius_bottom_left = 8
-	backing.add_theme_stylebox_override("panel", backing_style)
-	backing.set_anchors_preset(Control.PRESET_FULL_RECT)
-	backing.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_frame.add_child(backing)
+	_frame_backing.add_theme_stylebox_override("panel", backing_style)
+	_frame_backing.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_frame_backing.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_frame.add_child(_frame_backing)
 
 	var frame_margin := MarginContainer.new()
 	frame_margin.add_theme_constant_override("margin_left", 14)
@@ -227,31 +243,45 @@ func _build_ui() -> void:
 	_emblem_placeholder.modulate = Color(0.86, 0.78, 0.67, 0.92)
 	emblem_stack.add_child(_emblem_placeholder)
 
-	var actions_panel := PanelContainer.new()
-	actions_panel.add_theme_stylebox_override("panel", _make_inset_style(_inset_texture))
-	content.add_child(actions_panel)
+	_actions_panel = PanelContainer.new()
+	_actions_panel.add_theme_stylebox_override("panel", _make_inset_style(_inset_texture))
+	content.add_child(_actions_panel)
 
-	var actions_margin := MarginContainer.new()
-	actions_margin.add_theme_constant_override("margin_left", 10)
-	actions_margin.add_theme_constant_override("margin_top", 10)
-	actions_margin.add_theme_constant_override("margin_right", 10)
-	actions_margin.add_theme_constant_override("margin_bottom", 10)
-	actions_panel.add_child(actions_margin)
+	_actions_margin = MarginContainer.new()
+	_actions_margin.add_theme_constant_override("margin_left", 10)
+	_actions_margin.add_theme_constant_override("margin_top", 10)
+	_actions_margin.add_theme_constant_override("margin_right", 10)
+	_actions_margin.add_theme_constant_override("margin_bottom", 10)
+	_actions_panel.add_child(_actions_margin)
 
 	var actions := VBoxContainer.new()
 	actions.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	actions.add_theme_constant_override("separation", 6)
-	actions_margin.add_child(actions)
+	_actions_margin.add_child(actions)
+
+	# Order matches the painted menu in title key art:
+	# New Game (default focus), Continue, Load Game, Options, Extras, Quit Game
+	_new_game_button = _create_action_button("New Game")
+	_new_game_button.pressed.connect(_on_new_game_pressed)
+	actions.add_child(_new_game_button)
 
 	_continue_button = _create_action_button("Continue")
 	_continue_button.pressed.connect(_on_continue_pressed)
 	actions.add_child(_continue_button)
 
-	_new_game_button = _create_action_button("New Game")
-	_new_game_button.pressed.connect(_on_new_game_pressed)
-	actions.add_child(_new_game_button)
+	_load_game_button = _create_action_button("Load Game")
+	_load_game_button.pressed.connect(_on_load_game_pressed)
+	actions.add_child(_load_game_button)
 
-	_quit_button = _create_action_button("Quit")
+	_options_button = _create_action_button("Options")
+	_options_button.pressed.connect(_on_options_pressed)
+	actions.add_child(_options_button)
+
+	_extras_button = _create_action_button("Extras")
+	_extras_button.pressed.connect(_on_extras_pressed)
+	actions.add_child(_extras_button)
+
+	_quit_button = _create_action_button("Quit Game")
 	_quit_button.pressed.connect(_on_quit_pressed)
 	actions.add_child(_quit_button)
 
@@ -323,6 +353,27 @@ func _build_ui() -> void:
 	_overwrite_confirm_button.pressed.connect(_on_overwrite_confirm_pressed)
 	overwrite_actions.add_child(_overwrite_confirm_button)
 
+	_copyright_label = Label.new()
+	_copyright_label.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT, Control.PRESET_MODE_MINSIZE, 8)
+	_copyright_label.modulate = Color(0.93, 0.90, 0.84, 0.88)
+	_copyright_label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.85))
+	_copyright_label.add_theme_constant_override("shadow_offset_x", 1)
+	_copyright_label.add_theme_constant_override("shadow_offset_y", 1)
+	_copyright_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_copyright_label.visible = false
+	add_child(_copyright_label)
+
+	_version_label = Label.new()
+	_version_label.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT, Control.PRESET_MODE_MINSIZE, 8)
+	_version_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	_version_label.modulate = Color(0.93, 0.90, 0.84, 0.88)
+	_version_label.add_theme_color_override("font_shadow_color", Color(0, 0, 0, 0.85))
+	_version_label.add_theme_constant_override("shadow_offset_x", 1)
+	_version_label.add_theme_constant_override("shadow_offset_y", 1)
+	_version_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_version_label.visible = false
+	add_child(_version_label)
+
 func _load_ui_textures() -> void:
 	var ui_slots: Dictionary = _config.get("ui_slots", {})
 	_panel_texture = _load_texture_if_exists(str(ui_slots.get("panel", "")))
@@ -348,6 +399,9 @@ func _load_title_config() -> Dictionary:
 	config["subtitle"] = str(root.get("subtitle", config["subtitle"]))
 	config["footer"] = str(root.get("footer", config["footer"]))
 	config["music_cue"] = str(root.get("music_cue", config["music_cue"]))
+	config["menu_layout_mode"] = str(root.get("menu_layout_mode", config["menu_layout_mode"]))
+	config["version_text"] = str(root.get("version_text", config["version_text"]))
+	config["copyright_text"] = str(root.get("copyright_text", config["copyright_text"]))
 
 	var asset_slots: Dictionary = config.get("asset_slots", {}).duplicate(true)
 	var incoming_slots: Dictionary = {}
@@ -390,6 +444,108 @@ func _apply_asset_slots() -> void:
 	_overlay_rect.visible = _overlay_texture != null
 	_overlay_rect.modulate.a = 0.6 # Make it subtle to show background through it
 	_update_background_layer_treatment()
+	_apply_keyart_mode()
+
+func _apply_keyart_mode() -> void:
+	_keyart_mode = _is_keyart_mode_active()
+
+	# Corner labels are independent of keyart mode but driven from config.
+	var copyright_text := str(_config.get("copyright_text", "")).strip_edges()
+	var version_text := str(_config.get("version_text", "")).strip_edges()
+	_copyright_label.text = copyright_text
+	_copyright_label.visible = copyright_text != ""
+	_version_label.text = version_text
+	_version_label.visible = version_text != ""
+
+	if not _keyart_mode:
+		_frame.visible = true
+		_frame_backing.visible = true
+		return
+
+	# Painted key art supplies the title text, atmosphere, and decorative chrome.
+	# Suppress every layer that would otherwise compete with it.
+	_logo_rect.visible = false
+	_emblem_panel.visible = false
+	_title_label.visible = false
+	_subtitle_label.visible = false
+	_footer_label.visible = false
+	_sky_band.visible = false
+	_fog_band.visible = false
+	_ground_band.visible = false
+	_overlay_rect.visible = false
+	_frame.visible = false
+
+	# Lift the actions panel out of the centered chrome composition so it can be
+	# anchored directly over the painted menu column. Insert below the modal
+	# scrim so confirm dialogs still cover it cleanly.
+	if _actions_panel.get_parent() != self:
+		var prev_parent := _actions_panel.get_parent()
+		prev_parent.remove_child(_actions_panel)
+		add_child(_actions_panel)
+		move_child(_actions_panel, _modal_scrim.get_index())
+
+	_actions_panel.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
+	_actions_margin.add_theme_constant_override("margin_left", 0)
+	_actions_margin.add_theme_constant_override("margin_top", 0)
+	_actions_margin.add_theme_constant_override("margin_right", 0)
+	_actions_margin.add_theme_constant_override("margin_bottom", 0)
+
+	for button in [_continue_button, _new_game_button, _load_game_button, _options_button, _extras_button, _quit_button]:
+		if button != null:
+			_apply_keyart_button_style(button)
+
+func _is_keyart_mode_active() -> bool:
+	if str(_config.get("menu_layout_mode", "")) == MENU_LAYOUT_KEYART_OVERLAY:
+		return true
+	# Auto-detect: a configured background with no logo and no panel chrome is
+	# treated as a full key-art drop so chrome doesn't render over the artwork.
+	var asset_slots: Dictionary = _config.get("asset_slots", {})
+	var ui_slots: Dictionary = _config.get("ui_slots", {})
+	var has_background := str(asset_slots.get("background", "")) != ""
+	var has_logo := str(asset_slots.get("logo", "")) != ""
+	var has_panel := str(ui_slots.get("panel", "")) != ""
+	return has_background and not has_logo and not has_panel
+
+func _apply_keyart_button_style(button: Button) -> void:
+	# Dark band sized to cover any painted menu text underneath the runtime
+	# button. Brightens on hover/focus so keyboard navigation remains visible.
+	var normal := StyleBoxFlat.new()
+	normal.bg_color = Color(0.06, 0.04, 0.10, 0.62)
+	normal.corner_radius_top_left = 2
+	normal.corner_radius_top_right = 2
+	normal.corner_radius_bottom_left = 2
+	normal.corner_radius_bottom_right = 2
+	normal.content_margin_left = 14
+	normal.content_margin_right = 14
+	normal.content_margin_top = 4
+	normal.content_margin_bottom = 4
+
+	var hover := normal.duplicate() as StyleBoxFlat
+	hover.bg_color = Color(0.18, 0.12, 0.28, 0.92)
+	hover.border_width_left = 2
+	hover.border_color = Color(0.78, 0.62, 1.0, 0.95)
+
+	var pressed := hover.duplicate() as StyleBoxFlat
+	pressed.bg_color = Color(0.30, 0.20, 0.42, 0.95)
+
+	var focus := hover.duplicate() as StyleBoxFlat
+
+	var disabled := normal.duplicate() as StyleBoxFlat
+	disabled.bg_color = Color(0.06, 0.04, 0.10, 0.40)
+
+	button.add_theme_stylebox_override("normal", normal)
+	button.add_theme_stylebox_override("hover", hover)
+	button.add_theme_stylebox_override("pressed", pressed)
+	button.add_theme_stylebox_override("focus", focus)
+	button.add_theme_stylebox_override("disabled", disabled)
+
+	button.add_theme_color_override("font_color", Color(0.93, 0.88, 0.78, 1.0))
+	button.add_theme_color_override("font_hover_color", Color(1.0, 0.96, 0.86, 1.0))
+	button.add_theme_color_override("font_pressed_color", Color(1.0, 0.96, 0.86, 1.0))
+	button.add_theme_color_override("font_focus_color", Color(1.0, 0.96, 0.86, 1.0))
+	button.add_theme_color_override("font_disabled_color", Color(0.65, 0.60, 0.55, 0.6))
+
+	button.alignment = HORIZONTAL_ALIGNMENT_LEFT
 
 func _update_background_layer_treatment() -> void:
 	var has_background := _background_texture != null
@@ -406,14 +562,17 @@ func _update_background_layer_treatment() -> void:
 		_ground_band.color = Color(0.17, 0.13, 0.10, 0.96)
 
 func _refresh_actions() -> void:
-	_continue_button.visible = SaveManager.has_save()
+	var has_save := SaveManager.has_save()
+	_continue_button.visible = has_save
+	_load_game_button.disabled = not has_save
 	_hide_status()
 	_set_action_buttons_disabled(false)
+	# Re-apply load-game disabled state since _set_action_buttons_disabled cleared it
+	_load_game_button.disabled = not has_save
 	_transition_locked = false
-	if _continue_button.visible:
-		_continue_button.grab_focus()
-	else:
-		_new_game_button.grab_focus()
+	# Painted key art shows New Game as the resting highlight; default focus
+	# matches that so the visible state is consistent on first paint.
+	_new_game_button.grab_focus()
 
 func _layout_for_viewport() -> void:
 	var viewport_size := get_viewport_rect().size
@@ -440,9 +599,43 @@ func _layout_for_viewport() -> void:
 	_emblem_panel.custom_minimum_size = Vector2(96.0 if compact_layout else 124.0, 104.0 if compact_layout else 132.0)
 	_emblem_rect.custom_minimum_size = Vector2(64.0 if compact_layout else 84.0, 64.0 if compact_layout else 84.0)
 
-	for button in [_continue_button, _new_game_button, _quit_button, _overwrite_cancel_button, _overwrite_confirm_button]:
+	var menu_buttons := [_continue_button, _new_game_button, _load_game_button, _options_button, _extras_button, _quit_button]
+	var modal_buttons := [_overwrite_cancel_button, _overwrite_confirm_button]
+	var menu_button_height := 18.0 if _keyart_mode else (24.0 if compact_layout else 30.0)
+	var menu_button_font := 10 if _keyart_mode else (8 if compact_layout else 10)
+	for button in menu_buttons:
+		if button == null:
+			continue
+		button.custom_minimum_size = Vector2(0.0, menu_button_height)
+		button.add_theme_font_size_override("font_size", menu_button_font)
+	for button in modal_buttons:
+		if button == null:
+			continue
 		button.custom_minimum_size = Vector2(0.0, 24.0 if compact_layout else 30.0)
 		button.add_theme_font_size_override("font_size", 8 if compact_layout else 10)
+
+	if _copyright_label != null:
+		_copyright_label.add_theme_font_size_override("font_size", 8 if compact_layout else 9)
+	if _version_label != null:
+		_version_label.add_theme_font_size_override("font_size", 8 if compact_layout else 9)
+
+	if _keyart_mode and _actions_panel != null and _actions_panel.get_parent() == self:
+		# The painted menu sits roughly x = 3-30%, y = 44-86% of the viewport
+		# after STRETCH_KEEP_ASPECT_COVERED applies the 600x400 art to the
+		# 480x270 logical viewport (image scaled to 480x320, 25px cropped top
+		# and bottom). The runtime menu mirrors that footprint so the buttons
+		# overlap the painted text rather than floating beside it.
+		_actions_panel.set_anchors_preset(Control.PRESET_FULL_RECT)
+		_actions_panel.anchor_left = 0.03
+		_actions_panel.anchor_right = 0.32
+		_actions_panel.anchor_top = 0.42
+		_actions_panel.anchor_bottom = 0.88
+		_actions_panel.offset_left = 0.0
+		_actions_panel.offset_top = 0.0
+		_actions_panel.offset_right = 0.0
+		_actions_panel.offset_bottom = 0.0
+		_actions_panel.size_flags_horizontal = Control.SIZE_FILL
+		_actions_panel.size_flags_vertical = Control.SIZE_FILL
 
 func _on_continue_pressed() -> void:
 	if _transition_locked:
@@ -462,6 +655,28 @@ func _on_quit_pressed() -> void:
 		return
 	AudioManager.play_sfx(AudioManager.SFX_UI_CANCEL, -6.0)
 	get_tree().quit()
+
+func _on_load_game_pressed() -> void:
+	if _transition_locked:
+		return
+	# Single save slot for now — Load Game mirrors Continue. When a save selector
+	# screen exists, replace this with the selector flow.
+	if not SaveManager.has_save():
+		_show_status("No save to load.")
+		return
+	await _run_transition(Callable(self, "_continue_game"))
+
+func _on_options_pressed() -> void:
+	if _transition_locked:
+		return
+	AudioManager.play_sfx(AudioManager.SFX_UI_CANCEL, -8.0)
+	_show_status("Options — coming soon.")
+
+func _on_extras_pressed() -> void:
+	if _transition_locked:
+		return
+	AudioManager.play_sfx(AudioManager.SFX_UI_CANCEL, -8.0)
+	_show_status("Extras — coming soon.")
 
 func _on_overwrite_confirm_pressed() -> void:
 	if _transition_locked:
@@ -530,8 +745,10 @@ func _hide_status() -> void:
 	_status_label.visible = false
 
 func _set_action_buttons_disabled(disabled: bool) -> void:
-	for button in [_continue_button, _new_game_button, _quit_button, _overwrite_cancel_button, _overwrite_confirm_button]:
-		button.disabled = disabled
+	var buttons := [_continue_button, _new_game_button, _load_game_button, _options_button, _extras_button, _quit_button, _overwrite_cancel_button, _overwrite_confirm_button]
+	for button in buttons:
+		if button != null:
+			button.disabled = disabled
 
 func _create_action_button(button_text: String) -> Button:
 	var button := Button.new()

@@ -91,10 +91,14 @@ Important asset-location note:
 ### Visual Asset Pipeline
 
 - Start with `docs/visual_asset_handover.md` for the current visual-language audit and replacement rules.
+- Use `docs/visual_asset_audit.md` for the comprehensive ground-truth inventory of every image on disk and which ones are actually wired in.
 - Use `docs/asset_registry.md` as the single backlog tracker for visual asset replacement status.
 - Use `docs/intro_scene_art_brief.md` for the current title/intro art scope and immediate next proprietary art targets.
+- For the prologue art-production pass, work from `docs/prologue/02_prologue_asset_brief.md` (high level) and `docs/prologue/03_prologue_asset_specs.md` (per-asset specs).
+- For uniform image-generation prompts (style anchor + per-category conventions + per-asset templates), use `docs/asset_generation_prompts.md`. The Style Anchor must lead every prompt so generated assets stay visually coherent.
 - Keep concept work in `assets/proprietary/concepts/`, prompt/reference source in `assets/proprietary/source_prompts/` and `assets/proprietary/references/`, and runtime-ready exports in `assets/proprietary/production/`.
 - Do not migrate or delete placeholder runtime art until the replacement asset, config path, and registry entry are ready together.
+- The title screen now runs in **key-art mode** (`menu_layout_mode = "keyart_overlay"` in `data/ui/title_screen_config.json`). The painted key art at `assets/proprietary/production/title/title_keyart_purity_wars_v01.png` carries the title lockup, atmosphere, and emblem; the v01 frontier chrome remains on disk as `Suspended` fallbacks. See `docs/intro_title_asset_drop_notes.md` (`## v02 — Key Art Drop`) for what the runtime suppresses and why.
 
 ### Dialogue Data
 
@@ -145,6 +149,16 @@ Additional spot check performed during the pass: direct scene loads for `Frontie
 
 ## Next Phase
 
-Developer fill-in required before the next session:
+**Next milestone: Prologue — "The Day of Choosing".**
 
-`[Define the first full-production milestone here before resuming implementation.]`
+The first full-production milestone is the playable prologue. Implementation reference is `docs/prologue/01_prologue_implementation_plan.md`; the asset brief is `docs/prologue/02_prologue_asset_brief.md`. The narrative foundation that supports it lives in `docs/narrative/01_narrative_overview.md`, `docs/narrative/02_world_setting.md`, `docs/narrative/05_characters.md`, and `docs/narrative/07_story_structure.md`.
+
+The first build pass should:
+
+1. Scaffold the Class Chapel and Side Passage scenes per the asset brief.
+2. Wire the opening text-on-black sequence ("At first, there was only silence." / "And then—") through the existing `ScreenFader` and a new typewriter label.
+3. Stage the inciting incident as a cutscene reusing the existing `scenes/cutscene/` framework.
+4. Stage the unwinnable fight against the Captain of the Royal Guard via the existing `scenes/battle/` framework, with a forced-loss exit beat that hands off to the closing image.
+5. Hand off into a new post-prologue character-creation scene (out of scope for the prologue milestone itself but next on the roadmap).
+
+The prologue is the first full-production milestone because it owns the player's first contact with the game's tone, world rule, and central tragedy. Deferring it would force later content to carry exposition the prologue is designed to absorb.
