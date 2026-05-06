@@ -1,42 +1,123 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scenes/prologue/PrologueChapel.gd" id="1_chapel"]
+[ext_resource type="Texture2D" path="res://assets/art/battle/monster2_combat_backgrounds/keep.png" id="2_chapel_bg"]
+[ext_resource type="Texture2D" path="res://assets/art/player/universal-lpc-sprite_male_01_full.png" id="3_lpc_sheet"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_chapel_bg"]
-bg_color = Color(0.06, 0.04, 0.10, 1)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_chapel_player"]
+size = Vector2(20, 20)
 
-[node name="PrologueChapel" type="Control"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_chapel_wall_top_left"]
+size = Vector2(280, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_chapel_wall_top_right"]
+size = Vector2(280, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_chapel_wall_bottom"]
+size = Vector2(640, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_chapel_wall_left"]
+size = Vector2(16, 360)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_chapel_wall_right"]
+size = Vector2(16, 360)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_chapel_exit_trigger"]
+size = Vector2(48, 24)
+
+[node name="PrologueChapel" type="Node2D"]
 script = ExtResource("1_chapel")
+next_state = "prologue_side_passage"
+ambient_music_cue = "town"
 
-[node name="Background" type="Panel" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_chapel_bg")
+[node name="Background" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(320, 180)
+scale = Vector2(0.6, 0.6)
+texture = ExtResource("2_chapel_bg")
 
-[node name="Label" type="Label" parent="."]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -200.0
-offset_top = -32.0
-offset_right = 200.0
-offset_bottom = 32.0
-grow_horizontal = 2
-grow_vertical = 2
-horizontal_alignment = 1
-vertical_alignment = 1
-autowrap_mode = 3
+[node name="WorldCollision" type="StaticBody2D" parent="."]
+
+[node name="WallTopLeft" type="CollisionShape2D" parent="WorldCollision"]
+position = Vector2(140, 8)
+shape = SubResource("RectangleShape2D_chapel_wall_top_left")
+
+[node name="WallTopRight" type="CollisionShape2D" parent="WorldCollision"]
+position = Vector2(500, 8)
+shape = SubResource("RectangleShape2D_chapel_wall_top_right")
+
+[node name="WallBottom" type="CollisionShape2D" parent="WorldCollision"]
+position = Vector2(320, 352)
+shape = SubResource("RectangleShape2D_chapel_wall_bottom")
+
+[node name="WallLeft" type="CollisionShape2D" parent="WorldCollision"]
+position = Vector2(8, 180)
+shape = SubResource("RectangleShape2D_chapel_wall_left")
+
+[node name="WallRight" type="CollisionShape2D" parent="WorldCollision"]
+position = Vector2(632, 180)
+shape = SubResource("RectangleShape2D_chapel_wall_right")
+
+[node name="PlayerSpawn" type="Marker2D" parent="."]
+position = Vector2(320, 320)
+
+[node name="Bounds" type="Node2D" parent="."]
+
+[node name="Min" type="Marker2D" parent="Bounds"]
+position = Vector2(0, 0)
+
+[node name="Max" type="Marker2D" parent="Bounds"]
+position = Vector2(640, 360)
+
+[node name="Player" type="CharacterBody2D" parent="."]
+position = Vector2(320, 320)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
+shape = SubResource("RectangleShape2D_chapel_player")
+
+[node name="PlayerSprite" type="AnimatedSprite2D" parent="Player"]
+texture_filter = 1
+position = Vector2(0, -12)
+
+[node name="MapCamera" type="Camera2D" parent="Player"]
+position_smoothing_enabled = true
+position_smoothing_speed = 8.0
+
+[node name="ExitTrigger" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ExitTrigger"]
+position = Vector2(320, 16)
+shape = SubResource("RectangleShape2D_chapel_exit_trigger")
+
+[node name="PewNpcA" type="Node2D" parent="."]
+position = Vector2(192, 200)
+metadata/actor_id = "pew_npc_a"
+
+[node name="Sprite" type="Sprite2D" parent="PewNpcA"]
+texture_filter = 1
+texture = ExtResource("3_lpc_sheet")
+region_enabled = true
+region_rect = Rect2(256, 128, 64, 64)
+scale = Vector2(0.5, 0.5)
+
+[node name="PewNpcB" type="Node2D" parent="."]
+position = Vector2(448, 200)
+metadata/actor_id = "pew_npc_b"
+
+[node name="Sprite" type="Sprite2D" parent="PewNpcB"]
+texture_filter = 1
+texture = ExtResource("3_lpc_sheet")
+region_enabled = true
+region_rect = Rect2(192, 128, 64, 64)
+scale = Vector2(0.5, 0.5)
+
+[node name="TempleAttendant" type="Node2D" parent="."]
+position = Vector2(320, 100)
+metadata/actor_id = "temple_attendant"
+
+[node name="Sprite" type="Sprite2D" parent="TempleAttendant"]
+texture_filter = 1
+texture = ExtResource("3_lpc_sheet")
+region_enabled = true
+region_rect = Rect2(64, 128, 64, 64)
+scale = Vector2(0.5, 0.5)
