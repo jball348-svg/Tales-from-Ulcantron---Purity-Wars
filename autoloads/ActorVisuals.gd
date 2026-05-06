@@ -8,6 +8,21 @@ const ACTOR_TRAVELING_MERCHANT := "traveling_merchant"
 const ACTOR_BOOKSTORE_KEEPER := "bookstore_keeper"
 const ACTOR_KOBOLD := "kobold"
 
+# Prologue cast — placeholder visuals share the LPC bookstore-keeper region
+# tinted per character. The proprietary art pass replaces each entry with a
+# unique sprite and portrait.
+const ACTOR_PEW_NPC_A := "pew_npc_a"
+const ACTOR_PEW_NPC_B := "pew_npc_b"
+const ACTOR_PEW_NPC_C := "pew_npc_c"
+const ACTOR_PEW_NPC_D := "pew_npc_d"
+const ACTOR_TEMPLE_ATTENDANT := "temple_attendant"
+const ACTOR_STEWARD := "steward"
+const ACTOR_PRINCESS := "princess"
+const ACTOR_KING_ALDREN := "king_aldren"
+const ACTOR_QUEEN := "queen"
+const ACTOR_CAPTAIN_ROYAL_GUARD := "captain_royal_guard"
+const ACTOR_INITIATE := "initiate"
+
 const FIGHTER_MAP_SHEET_PATH := "res://assets/art/external/stage_8_5/fighter_walk_sheet.png"
 const BATTLEMAGE_MAP_SHEET_PATH := "res://assets/art/external/stage_8_5/battlemage_walk_sheet.png"
 const LPC_SPRITE_SHEET_PATH := "res://assets/art/player/universal-lpc-sprite_male_01_full.png"
@@ -393,6 +408,43 @@ func _ensure_registry() -> void:
 			"cutscene": {},
 			"follower": {},
 		},
+		ACTOR_PEW_NPC_A: _build_prologue_npc_entry(Color(0.78, 0.72, 0.58, 1.0)),
+		ACTOR_PEW_NPC_B: _build_prologue_npc_entry(Color(0.62, 0.74, 0.86, 1.0)),
+		ACTOR_PEW_NPC_C: _build_prologue_npc_entry(Color(0.86, 0.62, 0.62, 1.0)),
+		ACTOR_PEW_NPC_D: _build_prologue_npc_entry(Color(0.66, 0.84, 0.66, 1.0)),
+		ACTOR_TEMPLE_ATTENDANT: _build_prologue_npc_entry(Color(0.96, 0.92, 0.78, 1.0)),
+		ACTOR_STEWARD: _build_prologue_npc_entry(Color(0.62, 0.52, 0.78, 1.0)),
+		ACTOR_PRINCESS: _build_prologue_npc_entry(Color(0.84, 0.68, 0.96, 1.0)),
+		ACTOR_KING_ALDREN: _build_prologue_npc_entry(Color(0.74, 0.62, 0.34, 1.0)),
+		ACTOR_QUEEN: _build_prologue_npc_entry(Color(0.96, 0.86, 0.78, 1.0)),
+		ACTOR_CAPTAIN_ROYAL_GUARD: _build_prologue_npc_entry(Color(0.42, 0.42, 0.52, 1.0)),
+		ACTOR_INITIATE: _build_prologue_npc_entry(Color(0.92, 0.88, 0.82, 1.0)),
+	}
+
+func _build_prologue_npc_entry(tint: Color) -> Dictionary:
+	# Placeholder registration — every prologue NPC currently shares the LPC
+	# universal-sprite bookstore region tinted by `tint`. Proprietary
+	# replacements per character will arrive in a later art pass; until then
+	# the tint provides enough visual differentiation in the chapel and side
+	# passage placeholder rooms.
+	return {
+		"accent": tint,
+		"map": {
+			"type": "atlas",
+			"path": LPC_SPRITE_SHEET_PATH,
+			"region": LPC_BOOKSTORE_REGION,
+			"offset": DEFAULT_MAP_OFFSET,
+			"scale": DEFAULT_MAP_SCALE,
+			"modulate": tint,
+		},
+		"battle": {},
+		"portrait": {
+			"type": "atlas",
+			"path": LPC_SPRITE_SHEET_PATH,
+			"region": LPC_BOOKSTORE_REGION,
+		},
+		"cutscene": {},
+		"follower": {},
 	}
 
 func _actor_section(actor_id: String, section_name: String) -> Dictionary:

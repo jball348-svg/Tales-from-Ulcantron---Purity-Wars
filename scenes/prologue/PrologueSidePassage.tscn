@@ -1,42 +1,87 @@
-[gd_scene load_steps=3 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scenes/prologue/PrologueSidePassage.gd" id="1_passage"]
+[ext_resource type="Texture2D" path="res://assets/art/battle/monster2_combat_backgrounds/keep.png" id="2_passage_bg"]
+[ext_resource type="PackedScene" path="res://scenes/npc/NPC.tscn" id="3_npc"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_passage_bg"]
-bg_color = Color(0.04, 0.04, 0.06, 1)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_passage_player"]
+size = Vector2(20, 20)
 
-[node name="PrologueSidePassage" type="Control"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_passage_wall_horizontal"]
+size = Vector2(480, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_passage_wall_vertical_left"]
+size = Vector2(16, 220)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_passage_wall_vertical_right"]
+size = Vector2(16, 220)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_passage_exit_trigger"]
+size = Vector2(48, 24)
+
+[node name="PrologueSidePassage" type="Node2D"]
 script = ExtResource("1_passage")
+next_state = "prologue_inciting"
+ambient_music_cue = "town"
 
-[node name="Background" type="Panel" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_passage_bg")
+[node name="Background" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(240, 110)
+scale = Vector2(0.4, 0.35)
+modulate = Color(0.55, 0.55, 0.65, 1)
+texture = ExtResource("2_passage_bg")
 
-[node name="Label" type="Label" parent="."]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -200.0
-offset_top = -32.0
-offset_right = 200.0
-offset_bottom = 32.0
-grow_horizontal = 2
-grow_vertical = 2
-horizontal_alignment = 1
-vertical_alignment = 1
-autowrap_mode = 3
+[node name="WorldCollision" type="StaticBody2D" parent="."]
+
+[node name="WallTop" type="CollisionShape2D" parent="WorldCollision"]
+position = Vector2(240, 8)
+shape = SubResource("RectangleShape2D_passage_wall_horizontal")
+
+[node name="WallBottom" type="CollisionShape2D" parent="WorldCollision"]
+position = Vector2(240, 212)
+shape = SubResource("RectangleShape2D_passage_wall_horizontal")
+
+[node name="WallLeft" type="CollisionShape2D" parent="WorldCollision"]
+position = Vector2(8, 110)
+shape = SubResource("RectangleShape2D_passage_wall_vertical_left")
+
+[node name="WallRight" type="CollisionShape2D" parent="WorldCollision"]
+position = Vector2(472, 110)
+shape = SubResource("RectangleShape2D_passage_wall_vertical_right")
+
+[node name="PlayerSpawn" type="Marker2D" parent="."]
+position = Vector2(40, 110)
+
+[node name="Bounds" type="Node2D" parent="."]
+
+[node name="Min" type="Marker2D" parent="Bounds"]
+position = Vector2(0, 0)
+
+[node name="Max" type="Marker2D" parent="Bounds"]
+position = Vector2(480, 220)
+
+[node name="Player" type="CharacterBody2D" parent="."]
+position = Vector2(40, 110)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
+shape = SubResource("RectangleShape2D_passage_player")
+
+[node name="PlayerSprite" type="AnimatedSprite2D" parent="Player"]
+texture_filter = 1
+position = Vector2(0, -12)
+
+[node name="MapCamera" type="Camera2D" parent="Player"]
+position_smoothing_enabled = true
+position_smoothing_speed = 8.0
+
+[node name="ExitTrigger" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ExitTrigger"]
+position = Vector2(456, 110)
+shape = SubResource("RectangleShape2D_passage_exit_trigger")
+
+[node name="Steward" parent="." instance=ExtResource("3_npc")]
+position = Vector2(240, 110)
+npc_id = "prologue_side_passage_steward"
+npc_name = "Palace Steward"
+actor_id = "steward"

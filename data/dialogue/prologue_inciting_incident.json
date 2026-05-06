@@ -1,0 +1,53 @@
+{
+  "dialogue_id": "prologue_inciting_incident",
+  "nodes": [
+    {
+      "speaker": "King Aldren",
+      "text": "[POLISH PASS] Step back from the dais. This is a Pure Rite, and you know it.",
+      "portrait_id": "king_aldren",
+      "portrait": "",
+      "conditions": [],
+      "next": 1
+    },
+    {
+      "speaker": "Princess",
+      "text": "[POLISH PASS] I know what it is. I am still here.",
+      "portrait_id": "princess",
+      "portrait": "",
+      "conditions": [],
+      "next": 2
+    },
+    {
+      "speaker": "King Aldren",
+      "text": "[POLISH PASS] You will silence yourself or I will silence you for you.",
+      "portrait_id": "king_aldren",
+      "portrait": "",
+      "conditions": [],
+      "next": 3
+    },
+    {
+      "speaker": "Princess",
+      "text": "[POLISH PASS] Then silence me. I will not pretend to be one thing in front of these people.",
+      "portrait_id": "princess",
+      "portrait": "",
+      "conditions": [],
+      "next": 4
+    },
+    {
+      "speaker": "Queen",
+      "text": "[POLISH PASS] Aldren. Not in front of the witnesses. Not like this.",
+      "portrait_id": "queen",
+      "portrait": "",
+      "conditions": [],
+      "next": 5
+    },
+    {
+      "speaker": "King Aldren",
+      "text": "[POLISH PASS] Captain. Hold the line. The boy is not to leave the dais.",
+      "portrait_id": "king_aldren",
+      "portrait": "",
+      "conditions": [],
+      "next": -1
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+  "dialogue_id": "prologue_chapel_pew_pair_a",
+  "nodes": [
+    {
+      "speaker": "Pew Attendant",
+      "text": "[POLISH PASS] Can you believe it? The Princess herself.",
+      "portrait_id": "pew_npc_a",
+      "portrait": "",
+      "conditions": [],
+      "next": 1
+    },
+    {
+      "speaker": "Pew Attendant",
+      "text": "[POLISH PASS] She's been spending time with the Classes, they say.",
+      "portrait_id": "pew_npc_b",
+      "portrait": "",
+      "conditions": [],
+      "next": 2
+    },
+    {
+      "speaker": "Pew Attendant",
+      "text": "[POLISH PASS] That explains the guards.",
+      "portrait_id": "pew_npc_a",
+      "portrait": "",
+      "conditions": [],
+      "next": 3
+    },
+    {
+      "speaker": "Pew Attendant",
+      "text": "[POLISH PASS] Still… a ceremony's a ceremony.",
+      "portrait_id": "pew_npc_b",
+      "portrait": "",
+      "conditions": [],
+      "next": 4
+    },
+    {
+      "speaker": "Pew Attendant",
+      "text": "[POLISH PASS] Especially when it's Magik.",
+      "portrait_id": "pew_npc_a",
+      "portrait": "",
+      "conditions": [],
+      "next": -1
+    }
+  ]
+}

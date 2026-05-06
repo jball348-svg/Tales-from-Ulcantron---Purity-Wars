@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scenes/prologue/PrologueChapel.gd" id="1_chapel"]
 [ext_resource type="Texture2D" path="res://assets/art/battle/monster2_combat_backgrounds/keep.png" id="2_chapel_bg"]
-[ext_resource type="Texture2D" path="res://assets/art/player/universal-lpc-sprite_male_01_full.png" id="3_lpc_sheet"]
+[ext_resource type="PackedScene" path="res://scenes/npc/NPC.tscn" id="3_npc"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_chapel_player"]
 size = Vector2(20, 20)
@@ -89,35 +89,20 @@ position_smoothing_speed = 8.0
 position = Vector2(320, 16)
 shape = SubResource("RectangleShape2D_chapel_exit_trigger")
 
-[node name="PewNpcA" type="Node2D" parent="."]
+[node name="PewNpcA" parent="." instance=ExtResource("3_npc")]
 position = Vector2(192, 200)
-metadata/actor_id = "pew_npc_a"
+npc_id = "prologue_chapel_pew_pair_a"
+npc_name = "Pew Attendant"
+actor_id = "pew_npc_a"
 
-[node name="Sprite" type="Sprite2D" parent="PewNpcA"]
-texture_filter = 1
-texture = ExtResource("3_lpc_sheet")
-region_enabled = true
-region_rect = Rect2(256, 128, 64, 64)
-scale = Vector2(0.5, 0.5)
-
-[node name="PewNpcB" type="Node2D" parent="."]
+[node name="PewNpcB" parent="." instance=ExtResource("3_npc")]
 position = Vector2(448, 200)
-metadata/actor_id = "pew_npc_b"
+npc_id = "prologue_chapel_pew_pair_b"
+npc_name = "Pew Attendant"
+actor_id = "pew_npc_b"
 
-[node name="Sprite" type="Sprite2D" parent="PewNpcB"]
-texture_filter = 1
-texture = ExtResource("3_lpc_sheet")
-region_enabled = true
-region_rect = Rect2(192, 128, 64, 64)
-scale = Vector2(0.5, 0.5)
-
-[node name="TempleAttendant" type="Node2D" parent="."]
+[node name="TempleAttendant" parent="." instance=ExtResource("3_npc")]
 position = Vector2(320, 100)
-metadata/actor_id = "temple_attendant"
-
-[node name="Sprite" type="Sprite2D" parent="TempleAttendant"]
-texture_filter = 1
-texture = ExtResource("3_lpc_sheet")
-region_enabled = true
-region_rect = Rect2(64, 128, 64, 64)
-scale = Vector2(0.5, 0.5)
+npc_id = "prologue_chapel_temple_attendant"
+npc_name = "Temple Attendant"
+actor_id = "temple_attendant"
