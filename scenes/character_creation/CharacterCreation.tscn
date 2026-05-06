@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://scenes/character_creation/CharacterCreation.gd" id="1_charcreate"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_charcreate_bg"]
-bg_color = Color(0.05, 0.05, 0.10, 1)
+bg_color = Color(0.04, 0.03, 0.08, 1)
 
 [node name="CharacterCreation" type="Control"]
 layout_mode = 3
@@ -24,19 +24,47 @@ grow_vertical = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_charcreate_bg")
 
-[node name="Label" type="Label" parent="."]
+[node name="Center" type="CenterContainer" parent="."]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -200.0
-offset_top = -32.0
-offset_right = 200.0
-offset_bottom = 32.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+
+[node name="Layout" type="VBoxContainer" parent="Center"]
+custom_minimum_size = Vector2(360, 0)
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="Heading" type="Label" parent="Center/Layout"]
 horizontal_alignment = 1
-vertical_alignment = 1
+text = "Choose your starting path."
+theme_override_font_sizes/font_size = 16
+
+[node name="PathSummary" type="Label" parent="Center/Layout"]
+horizontal_alignment = 1
 autowrap_mode = 3
+modulate = Color(0.92, 0.88, 0.78, 0.92)
+text = ""
+theme_override_font_sizes/font_size = 10
+
+[node name="PathButtons" type="HBoxContainer" parent="Center/Layout"]
+alignment = 1
+theme_override_constants/separation = 16
+
+[node name="PureButton" type="Button" parent="Center/Layout/PathButtons"]
+custom_minimum_size = Vector2(120, 32)
+text = "Pure"
+theme_override_font_sizes/font_size = 12
+
+[node name="MixedButton" type="Button" parent="Center/Layout/PathButtons"]
+custom_minimum_size = Vector2(120, 32)
+text = "Mixed"
+theme_override_font_sizes/font_size = 12
+
+[node name="BeginButton" type="Button" parent="Center/Layout"]
+custom_minimum_size = Vector2(180, 32)
+size_flags_horizontal = 4
+text = "Begin Your Journey"
+theme_override_font_sizes/font_size = 12
