@@ -30,10 +30,17 @@ script = ExtResource("1_chapel")
 next_state = "prologue_side_passage"
 ambient_music_cue = "town"
 
+[node name="BackdropFill" type="ColorRect" parent="."]
+position = Vector2(0, 0)
+size = Vector2(640, 360)
+color = Color(0.06, 0.04, 0.10, 1)
+mouse_filter = 2
+
 [node name="Background" type="Sprite2D" parent="."]
 texture_filter = 1
 position = Vector2(320, 180)
-scale = Vector2(0.6, 0.6)
+scale = Vector2(2.8, 3.4)
+modulate = Color(0.85, 0.78, 0.92, 0.85)
 texture = ExtResource("2_chapel_bg")
 
 [node name="WorldCollision" type="StaticBody2D" parent="."]
