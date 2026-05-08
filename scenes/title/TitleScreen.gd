@@ -484,7 +484,13 @@ func _apply_keyart_mode() -> void:
 		add_child(_actions_panel)
 		move_child(_actions_panel, _modal_scrim.get_index())
 
-	_actions_panel.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
+	# Opaque panel cover so the painted menu underneath is fully obscured —
+	# without this, when the runtime menu has fewer items than the painted
+	# six (e.g. Continue hidden when no save), the bottom of the painted
+	# column shows through below the runtime stack.
+	var actions_panel_style := StyleBoxFlat.new()
+	actions_panel_style.bg_color = Color(0.04, 0.03, 0.08, 0.95)
+	_actions_panel.add_theme_stylebox_override("panel", actions_panel_style)
 	_actions_margin.add_theme_constant_override("margin_left", 0)
 	_actions_margin.add_theme_constant_override("margin_top", 0)
 	_actions_margin.add_theme_constant_override("margin_right", 0)
@@ -608,6 +614,10 @@ func _layout_for_viewport() -> void:
 			continue
 		button.custom_minimum_size = Vector2(0.0, menu_button_height)
 		button.add_theme_font_size_override("font_size", menu_button_font)
+		if _keyart_mode:
+			# Fill the actions panel evenly between visible buttons so 5- and
+			# 6-button stacks both cover the painted menu region cleanly.
+			button.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	for button in modal_buttons:
 		if button == null:
 			continue
