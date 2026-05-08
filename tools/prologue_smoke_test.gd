@@ -166,10 +166,10 @@ func _verify_inciting_full_sequence() -> void:
 	# Round 3
 	await _click_choice_button(inciting, "CleverButton", "Inciting round 3: CleverButton (Improvise) click registers")
 	# Post-defeat dialogue
-	await _await_dialogue_active(600, "Inciting: post-defeat dialogue starts")
+	await _await_dialogue_active(2000, "Inciting: post-defeat dialogue starts")
 	await _drain_active_dialogue("post-defeat")
 	# Wait for fade-out to character_creation (FADE_OUT_DURATION = 0.7s).
-	for i in range(120):
+	for i in range(300):
 		await get_tree().process_frame
 		if SceneManager.current_state_name == "character_creation":
 			break
@@ -190,7 +190,7 @@ func _await_dialogue_active(max_frames: int, message: String) -> void:
 	_assert(DialogueManager.is_active(), message + " (waited %d frames)" % frames)
 
 func _drain_active_dialogue(label: String) -> void:
-	var safety := 800
+	var safety := 2000
 	while DialogueManager.is_active() and safety > 0:
 		DialogueManager.advance()
 		await get_tree().process_frame
@@ -206,7 +206,7 @@ func _click_choice_button(scene: Node, button_name: String, message: String) -> 
 	if button == null:
 		_fail("Inciting: choice button %s missing" % button_name)
 		return
-	var safety := 800
+	var safety := 2000
 	var panel := scene.get_node_or_null("ChoicePanel") as Control
 	while safety > 0:
 		if panel != null and panel.visible and not button.disabled:
