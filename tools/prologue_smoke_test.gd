@@ -73,6 +73,10 @@ func _run_tests() -> void:
 	_assert_scene_node("PewNpcB", "PrologueChapel should have PewNpcB NPC instance")
 	_assert_scene_node("TempleAttendant", "PrologueChapel should have TempleAttendant NPC instance")
 	_assert_player_not_stuck_in_wall(SceneManager.current_state_scene)
+	_assert_player_sprite_has_frames(SceneManager.current_state_scene, "PrologueChapel")
+	_assert_npc_sprite_has_texture(SceneManager.current_state_scene, "PewNpcA", "PrologueChapel")
+	_assert_npc_sprite_has_texture(SceneManager.current_state_scene, "PewNpcB", "PrologueChapel")
+	_assert_npc_sprite_has_texture(SceneManager.current_state_scene, "TempleAttendant", "PrologueChapel")
 	await _verify_exit_trigger_fires("PrologueChapel", "prologue_side_passage")
 
 	# 4. Side passage.
@@ -84,6 +88,7 @@ func _run_tests() -> void:
 	_assert_scene_node("ExitTrigger", "PrologueSidePassage should have ExitTrigger")
 	_assert_scene_node("Steward", "PrologueSidePassage should have Steward NPC")
 	_assert_player_not_stuck_in_wall(SceneManager.current_state_scene)
+	await _verify_npc_interact_starts_dialogue("PrologueSidePassage", "Steward", "prologue_side_passage_steward")
 	await _verify_exit_trigger_fires("PrologueSidePassage", "prologue_inciting")
 
 	# 5. Inciting incident.
@@ -160,6 +165,37 @@ func _verify_exit_trigger_fires(scene_label: String, expected_next_state: String
 		await get_tree().process_frame
 	_assert(SceneManager.current_state_name == expected_next_state,
 		"%s: walking the player into ExitTrigger advances state to %s (got: %s)" % [scene_label, expected_next_state, SceneManager.current_state_name])
+
+func _assert_player_sprite_has_frames(scene: Node, scene_label: String) -> void:
+	if scene == null:
+		return
+	var player_sprite := scene.get_node_or_null("Player/PlayerSprite") as AnimatedSprite2D
+	if player_sprite == null:
+		_fail("%s: Player/PlayerSprite missing" % scene_label)
+		return
+	_assert(player_sprite.sprite_frames != null,
+		"%s: Player/PlayerSprite.sprite_frames is set (player will be visible)" % scene_label)
+	_assert(player_sprite.visible,
+		"%s: Player/PlayerSprite.visible == true" % scene_label)
+	if player_sprite.sprite_frames != null:
+		_assert(player_sprite.sprite_frames.has_animation("idle_down"),
+			"%s: Player sprite has 'idle_down' animation" % scene_label)
+
+func _assert_npc_sprite_has_texture(scene: Node, npc_name: String, scene_label: String) -> void:
+	if scene == null:
+		return
+	var npc := scene.get_node_or_null(npc_name)
+	if npc == null:
+		_fail("%s: NPC %s not found" % [scene_label, npc_name])
+		return
+	var sprite := npc.get_node_or_null("Sprite") as Sprite2D
+	if sprite == null:
+		_fail("%s: NPC %s has no Sprite child" % [scene_label, npc_name])
+		return
+	_assert(sprite.texture != null,
+		"%s: NPC %s Sprite.texture is set" % [scene_label, npc_name])
+	_assert(sprite.visible,
+		"%s: NPC %s Sprite.visible == true" % [scene_label, npc_name])
 
 func _assert_player_not_stuck_in_wall(scene: Node) -> void:
 	if scene == null:
