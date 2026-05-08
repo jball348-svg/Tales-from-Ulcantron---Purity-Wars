@@ -102,9 +102,15 @@ func _run_tests() -> void:
 	_assert_scene_node("ChoicePanel/Layout/StrikeButton", "PrologueInciting should have StrikeButton")
 	_assert_scene_node("ChoicePanel/Layout/CleverButton", "PrologueInciting should have CleverButton")
 
-	# Skip the dialogue + rounds by jumping to character_creation directly. The
-	# round-by-round behaviour will be smoke-tested separately when the user
-	# play-tests interactively; here we verify routing only.
+	# Run the full inciting sequence: pre-fight dialogue → 3 rounds with
+	# choice picks → post-defeat dialogue → auto-route to character_creation.
+	await _verify_inciting_full_sequence()
+	_assert(SceneManager.current_state_name == "character_creation",
+		"PrologueInciting completed: routed to 'character_creation' (got: %s)" % SceneManager.current_state_name)
+	for i in range(8):
+		await get_tree().process_frame
+	# Now in character_creation; reuse the same change_state path so the
+	# downstream tests below run against a clean character_creation scene.
 	_change_state_or_fail("character_creation", {"source": "test"})
 	for i in range(8):
 		await get_tree().process_frame
@@ -141,6 +147,77 @@ func _run_tests() -> void:
 		"Save file deleted cleanly at end of test")
 
 	_log("--- Prologue smoke test complete ---")
+
+func _verify_inciting_full_sequence() -> void:
+	# The PrologueInciting controller starts pre-fight dialogue ~0.5s after
+	# _ready, runs three rounds (each waits for a button press), then plays
+	# post-defeat dialogue, then routes to character_creation.
+	var inciting: Node = SceneManager.current_state_scene
+	if inciting == null:
+		_fail("Inciting sequence: scene is null")
+		return
+	# Wait for the pre-fight dialogue to start (after PRE_FIGHT_DELAY).
+	await _await_dialogue_active(120, "Inciting: pre-fight dialogue starts")
+	await _drain_active_dialogue("pre-fight")
+	# Round 1
+	await _click_choice_button(inciting, "DefendButton", "Inciting round 1: DefendButton click registers")
+	# Round 2
+	await _click_choice_button(inciting, "StrikeButton", "Inciting round 2: StrikeButton click registers")
+	# Round 3
+	await _click_choice_button(inciting, "CleverButton", "Inciting round 3: CleverButton (Improvise) click registers")
+	# Post-defeat dialogue
+	await _await_dialogue_active(120, "Inciting: post-defeat dialogue starts")
+	await _drain_active_dialogue("post-defeat")
+	# Wait for fade-out to character_creation.
+	for i in range(60):
+		await get_tree().process_frame
+		if SceneManager.current_state_name == "character_creation":
+			break
+	_assert(bool(PlayerData.get_flag("prologue_choice_round1", "")) != false,
+		"Inciting: prologue_choice_round1 flag set after round 1 (got: %s)" % str(PlayerData.get_flag("prologue_choice_round1", "")))
+	_assert(bool(PlayerData.get_flag("prologue_choice_round2", "")) != false,
+		"Inciting: prologue_choice_round2 flag set after round 2")
+	_assert(bool(PlayerData.get_flag("prologue_choice_round3", "")) != false,
+		"Inciting: prologue_choice_round3 flag set after round 3")
+
+func _await_dialogue_active(max_frames: int, message: String) -> void:
+	var frames := 0
+	while frames < max_frames:
+		if DialogueManager.is_active():
+			break
+		await get_tree().process_frame
+		frames += 1
+	_assert(DialogueManager.is_active(), message + " (waited %d frames)" % frames)
+
+func _drain_active_dialogue(label: String) -> void:
+	var safety := 200
+	while DialogueManager.is_active() and safety > 0:
+		DialogueManager.advance()
+		await get_tree().process_frame
+		safety -= 1
+	_assert(not DialogueManager.is_active(),
+		"Inciting: %s dialogue fully drained (safety remaining: %d)" % [label, safety])
+
+func _click_choice_button(scene: Node, button_name: String, message: String) -> void:
+	# Wait for the choice panel to be visible (controller waits ROUND_BEAT_DELAY
+	# after each vignette before showing it). Then emit the button's pressed
+	# signal directly to advance the round.
+	var button := scene.get_node_or_null("ChoicePanel/Layout/" + button_name) as Button
+	if button == null:
+		_fail("Inciting: choice button %s missing" % button_name)
+		return
+	var safety := 200
+	var panel := scene.get_node_or_null("ChoicePanel") as Control
+	while safety > 0:
+		if panel != null and panel.visible and not button.disabled:
+			break
+		await get_tree().process_frame
+		safety -= 1
+	_assert(safety > 0, "Inciting: choice panel became visible for " + button_name)
+	button.pressed.emit()
+	for i in range(3):
+		await get_tree().process_frame
+	_pass(message)
 
 func _verify_npc_interact_starts_dialogue(scene_label: String, npc_name: String, expected_dialogue_id: String) -> void:
 	var scene: Node = SceneManager.current_state_scene
