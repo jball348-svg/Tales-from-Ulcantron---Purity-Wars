@@ -178,18 +178,29 @@ func _verify_exit_trigger_fires(scene_label: String, expected_next_state: String
 		_fail("%s: cannot test exit trigger (Player or ExitTrigger missing)" % scene_label)
 		return
 
-	# Move the player into the exit trigger's collision shape and wait a couple
-	# of physics frames for body_entered to fire. The trigger's CollisionShape2D
-	# child holds the actual position; use its global position.
+	# Place the player just outside the trigger's CollisionShape2D, then
+	# nudge them into it via move_and_slide. Direct global_position teleports
+	# don't always retrigger Area2D body_entered when the receiving area was
+	# just freshly entered; an actual physics step makes it deterministic.
 	var trigger_shape := trigger.get_node_or_null("CollisionShape2D") as CollisionShape2D
 	var target_position: Vector2 = trigger_shape.global_position if trigger_shape != null else trigger.global_position
-	player.global_position = target_position
-	for i in range(SUBFRAMES_PER_WAIT):
-		await get_tree().physics_frame
+	if player is CharacterBody2D:
+		var body := player as CharacterBody2D
+		body.global_position = target_position + Vector2(0, 30)
+		for i in range(2):
+			await get_tree().physics_frame
+		body.velocity = Vector2(0, -200)
+		for i in range(SUBFRAMES_PER_WAIT * 2):
+			await get_tree().physics_frame
+		body.velocity = Vector2.ZERO
+	else:
+		player.global_position = target_position
+		for i in range(SUBFRAMES_PER_WAIT):
+			await get_tree().physics_frame
 	for i in range(SUBFRAMES_PER_WAIT):
 		await get_tree().process_frame
 	# Wait for the fade-out + state change to complete.
-	for i in range(20):
+	for i in range(30):
 		await get_tree().process_frame
 	_assert(SceneManager.current_state_name == expected_next_state,
 		"%s: walking the player into ExitTrigger advances state to %s (got: %s)" % [scene_label, expected_next_state, SceneManager.current_state_name])
