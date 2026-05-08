@@ -142,6 +142,34 @@ func _run_tests() -> void:
 
 	_log("--- Prologue smoke test complete ---")
 
+func _verify_npc_interact_starts_dialogue(scene_label: String, npc_name: String, expected_dialogue_id: String) -> void:
+	var scene: Node = SceneManager.current_state_scene
+	var player: Node = scene.get_node_or_null("Player")
+	var npc: Node = scene.get_node_or_null(npc_name)
+	if player == null or npc == null:
+		_fail("%s: Player or NPC %s missing" % [scene_label, npc_name])
+		return
+	# Move the player on top of the NPC's interaction zone, wait for the
+	# Area2D body_entered signal to land, then synthesize an "interact" action.
+	player.global_position = npc.global_position
+	for i in range(SUBFRAMES_PER_WAIT):
+		await get_tree().physics_frame
+	for i in range(SUBFRAMES_PER_WAIT):
+		await get_tree().process_frame
+	# Synthesize an interact key press.
+	Input.action_press("interact")
+	for i in range(2):
+		await get_tree().process_frame
+	Input.action_release("interact")
+	for i in range(4):
+		await get_tree().process_frame
+	_assert(DialogueManager.is_active(),
+		"%s: pressing 'interact' near %s starts a dialogue" % [scene_label, npc_name])
+	# Cancel the dialogue so subsequent tests are clean.
+	while DialogueManager.is_active():
+		DialogueManager.advance()
+		await get_tree().process_frame
+
 func _verify_exit_trigger_fires(scene_label: String, expected_next_state: String) -> void:
 	var scene: Node = SceneManager.current_state_scene
 	var player: Node = scene.get_node_or_null("Player")
