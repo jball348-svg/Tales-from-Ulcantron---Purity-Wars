@@ -156,11 +156,19 @@ func _verify_npc_interact_starts_dialogue(scene_label: String, npc_name: String,
 		await get_tree().physics_frame
 	for i in range(SUBFRAMES_PER_WAIT):
 		await get_tree().process_frame
-	# Synthesize an interact key press.
-	Input.action_press("interact")
+	# Synthesize an interact key press as a real InputEvent so it flows through
+	# NPC.gd's _unhandled_input handler (Input.action_press alone only updates
+	# polling state and doesn't dispatch to event handlers).
+	var press_event := InputEventAction.new()
+	press_event.action = "interact"
+	press_event.pressed = true
+	Input.parse_input_event(press_event)
 	for i in range(2):
 		await get_tree().process_frame
-	Input.action_release("interact")
+	var release_event := InputEventAction.new()
+	release_event.action = "interact"
+	release_event.pressed = false
+	Input.parse_input_event(release_event)
 	for i in range(4):
 		await get_tree().process_frame
 	_assert(DialogueManager.is_active(),
