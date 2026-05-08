@@ -510,15 +510,15 @@ func _apply_keyart_button_style(button: Button) -> void:
 	# Dark band sized to cover any painted menu text underneath the runtime
 	# button. Brightens on hover/focus so keyboard navigation remains visible.
 	var normal := StyleBoxFlat.new()
-	normal.bg_color = Color(0.06, 0.04, 0.10, 0.62)
+	normal.bg_color = Color(0.06, 0.04, 0.10, 0.78)
 	normal.corner_radius_top_left = 2
 	normal.corner_radius_top_right = 2
 	normal.corner_radius_bottom_left = 2
 	normal.corner_radius_bottom_right = 2
-	normal.content_margin_left = 14
-	normal.content_margin_right = 14
-	normal.content_margin_top = 4
-	normal.content_margin_bottom = 4
+	normal.content_margin_left = 10
+	normal.content_margin_right = 10
+	normal.content_margin_top = 1
+	normal.content_margin_bottom = 1
 
 	var hover := normal.duplicate() as StyleBoxFlat
 	hover.bg_color = Color(0.18, 0.12, 0.28, 0.92)
@@ -601,8 +601,8 @@ func _layout_for_viewport() -> void:
 
 	var menu_buttons := [_continue_button, _new_game_button, _load_game_button, _options_button, _extras_button, _quit_button]
 	var modal_buttons := [_overwrite_cancel_button, _overwrite_confirm_button]
-	var menu_button_height := 18.0 if _keyart_mode else (24.0 if compact_layout else 30.0)
-	var menu_button_font := 10 if _keyart_mode else (8 if compact_layout else 10)
+	var menu_button_height := 13.0 if _keyart_mode else (24.0 if compact_layout else 30.0)
+	var menu_button_font := 9 if _keyart_mode else (8 if compact_layout else 10)
 	for button in menu_buttons:
 		if button == null:
 			continue
@@ -620,22 +620,28 @@ func _layout_for_viewport() -> void:
 		_version_label.add_theme_font_size_override("font_size", 8 if compact_layout else 9)
 
 	if _keyart_mode and _actions_panel != null and _actions_panel.get_parent() == self:
-		# The painted menu sits roughly x = 3-30%, y = 44-86% of the viewport
-		# after STRETCH_KEEP_ASPECT_COVERED applies the 600x400 art to the
-		# 480x270 logical viewport (image scaled to 480x320, 25px cropped top
-		# and bottom). The runtime menu mirrors that footprint so the buttons
-		# overlap the painted text rather than floating beside it.
+		# Anchor the runtime menu directly over the painted menu column in the
+		# key art. Visually-measured against the actual 480x270 cover-fitted art:
+		# the painted column starts ~21% in from the left, ends ~38% across, and
+		# vertically sits between ~49% (top of "NEW GAME") and ~89% (bottom of
+		# "QUIT GAME"). Anchoring slightly wider than the painted text gives the
+		# button bands enough horizontal padding to fully cover the painted glyphs.
 		_actions_panel.set_anchors_preset(Control.PRESET_FULL_RECT)
-		_actions_panel.anchor_left = 0.03
-		_actions_panel.anchor_right = 0.32
-		_actions_panel.anchor_top = 0.42
-		_actions_panel.anchor_bottom = 0.88
+		_actions_panel.anchor_left = 0.18
+		_actions_panel.anchor_right = 0.42
+		_actions_panel.anchor_top = 0.49
+		_actions_panel.anchor_bottom = 0.89
 		_actions_panel.offset_left = 0.0
 		_actions_panel.offset_top = 0.0
 		_actions_panel.offset_right = 0.0
 		_actions_panel.offset_bottom = 0.0
 		_actions_panel.size_flags_horizontal = Control.SIZE_FILL
 		_actions_panel.size_flags_vertical = Control.SIZE_FILL
+		# Tighten button spacing so the 5-or-6 button stack fits the painted
+		# column without overflowing or leaving large gaps.
+		var actions_vbox := _actions_margin.get_child(0) as VBoxContainer
+		if actions_vbox != null:
+			actions_vbox.add_theme_constant_override("separation", 1)
 
 func _on_continue_pressed() -> void:
 	if _transition_locked:
