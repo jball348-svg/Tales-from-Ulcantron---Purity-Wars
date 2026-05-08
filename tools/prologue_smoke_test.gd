@@ -178,29 +178,24 @@ func _verify_exit_trigger_fires(scene_label: String, expected_next_state: String
 		_fail("%s: cannot test exit trigger (Player or ExitTrigger missing)" % scene_label)
 		return
 
-	# Place the player just outside the trigger's CollisionShape2D, then
-	# nudge them into it via move_and_slide. Direct global_position teleports
-	# don't always retrigger Area2D body_entered when the receiving area was
-	# just freshly entered; an actual physics step makes it deterministic.
+	# Position the player just below the trigger, then synthesize a held
+	# "move_up" input so PrologueRoom._physics_process drives them into the
+	# trigger via the real movement code path. (Setting body.velocity
+	# directly is overwritten by the controller's Input.get_vector reset
+	# every physics frame.)
 	var trigger_shape := trigger.get_node_or_null("CollisionShape2D") as CollisionShape2D
 	var target_position: Vector2 = trigger_shape.global_position if trigger_shape != null else trigger.global_position
-	if player is CharacterBody2D:
-		var body := player as CharacterBody2D
-		body.global_position = target_position + Vector2(0, 30)
-		for i in range(2):
-			await get_tree().physics_frame
-		body.velocity = Vector2(0, -200)
-		for i in range(SUBFRAMES_PER_WAIT * 2):
-			await get_tree().physics_frame
-		body.velocity = Vector2.ZERO
-	else:
-		player.global_position = target_position
-		for i in range(SUBFRAMES_PER_WAIT):
-			await get_tree().physics_frame
+	player.global_position = target_position + Vector2(0, 40)
+	for i in range(2):
+		await get_tree().physics_frame
+	Input.action_press("move_up")
+	for i in range(SUBFRAMES_PER_WAIT * 3):
+		await get_tree().physics_frame
+	Input.action_release("move_up")
 	for i in range(SUBFRAMES_PER_WAIT):
 		await get_tree().process_frame
 	# Wait for the fade-out + state change to complete.
-	for i in range(30):
+	for i in range(40):
 		await get_tree().process_frame
 	_assert(SceneManager.current_state_name == expected_next_state,
 		"%s: walking the player into ExitTrigger advances state to %s (got: %s)" % [scene_label, expected_next_state, SceneManager.current_state_name])
