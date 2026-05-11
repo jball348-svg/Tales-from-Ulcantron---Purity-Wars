@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scenes/prologue/PrologueSidePassage.gd" id="1_passage"]
-[ext_resource type="Texture2D" path="res://assets/art/battle/monster2_combat_backgrounds/keep.png" id="2_passage_bg"]
+[ext_resource type="Texture2D" path="res://assets/proprietary/production/environments/prologue_side_passage_backdrop_v01.png" id="2_passage_bg"]
 [ext_resource type="PackedScene" path="res://scenes/npc/NPC.tscn" id="3_npc"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_passage_player"]
@@ -33,8 +33,7 @@ mouse_filter = 2
 [node name="Background" type="Sprite2D" parent="."]
 texture_filter = 1
 position = Vector2(240, 135)
-scale = Vector2(2.2, 2.7)
-modulate = Color(0.55, 0.55, 0.70, 0.75)
+scale = Vector2(0.349, 0.352)
 texture = ExtResource("2_passage_bg")
 
 [node name="WorldCollision" type="StaticBody2D" parent="."]

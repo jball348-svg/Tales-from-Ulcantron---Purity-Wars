@@ -482,7 +482,16 @@ func _ensure_registry() -> void:
 			Color(0.72, 0.66, 0.88, 1.0),
 			"",
 			"res://assets/proprietary/production/sprites/player_attendant_male_battle_v01.png",
-			_build_directional_map_entry(FIGHTER_MAP_SHEET_PATH, Color(0.72, 0.66, 0.88, 1.0)),
+			{
+				# Map sprite: use the painted BS-01 attendant as a static
+				# single-pose for all four facings. Lose the walk animation,
+				# gain visual identity and parity with the painted backdrops.
+				"type": "single_frame_directions",
+				"path": "res://assets/proprietary/production/sprites/player_attendant_male_battle_v01.png",
+				"offset": Vector2(0.0, -14.0),
+				"scale": Vector2(0.06, 0.06),
+				"modulate": Color(1.0, 1.0, 1.0, 1.0),
+			},
 			88.0
 		),
 		ACTOR_PLAYER_ATTENDANT_FEMALE: _build_player_attendant_female_entry(),

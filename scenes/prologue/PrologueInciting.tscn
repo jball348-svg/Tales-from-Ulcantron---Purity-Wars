@@ -1,7 +1,8 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scenes/prologue/PrologueInciting.gd" id="1_inciting"]
 [ext_resource type="PackedScene" path="res://scenes/npc/NPC.tscn" id="2_npc"]
+[ext_resource type="Texture2D" path="res://assets/proprietary/production/environments/prologue_inciting_backdrop_v01.png" id="3_inciting_bg"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_inciting_player"]
 size = Vector2(20, 20)
@@ -22,47 +23,17 @@ size = Vector2(1, 1)
 script = ExtResource("1_inciting")
 ambient_music_cue = "town"
 
-[node name="Floor" type="ColorRect" parent="."]
+[node name="BackdropFill" type="ColorRect" parent="."]
 position = Vector2(0, 0)
 size = Vector2(640, 360)
-color = Color(0.065, 0.055, 0.075, 1)
+color = Color(0.03, 0.025, 0.05, 1)
 mouse_filter = 2
 
-[node name="StoneFloor" type="ColorRect" parent="."]
-position = Vector2(24, 16)
-size = Vector2(592, 328)
-color = Color(0.14, 0.13, 0.15, 1)
-mouse_filter = 2
-
-[node name="RoyalDais" type="ColorRect" parent="."]
-position = Vector2(82, 28)
-size = Vector2(476, 112)
-color = Color(0.24, 0.20, 0.24, 1)
-mouse_filter = 2
-
-[node name="ThroneCarpet" type="ColorRect" parent="."]
-position = Vector2(288, 28)
-size = Vector2(64, 240)
-color = Color(0.43, 0.09, 0.14, 1)
-mouse_filter = 2
-
-[node name="WitnessLine" type="ColorRect" parent="."]
-position = Vector2(96, 174)
-size = Vector2(448, 14)
-color = Color(0.28, 0.24, 0.23, 1)
-mouse_filter = 2
-
-[node name="LeftBanner" type="ColorRect" parent="."]
-position = Vector2(64, 40)
-size = Vector2(28, 86)
-color = Color(0.56, 0.12, 0.18, 1)
-mouse_filter = 2
-
-[node name="RightBanner" type="ColorRect" parent="."]
-position = Vector2(548, 40)
-size = Vector2(28, 86)
-color = Color(0.20, 0.28, 0.56, 1)
-mouse_filter = 2
+[node name="Background" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(320, 180)
+scale = Vector2(0.466, 0.469)
+texture = ExtResource("3_inciting_bg")
 
 [node name="WorldCollision" type="StaticBody2D" parent="."]
 
