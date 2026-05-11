@@ -479,19 +479,15 @@ func _ensure_registry() -> void:
 			_build_sheet_frame_map_entry(BATTLEMAGE_MAP_SHEET_PATH, PLAYER_DIRECTION_ROWS["down"], 0, Color(0.92, 0.88, 0.82, 1.0), Vector2(0.0, -10.0), Vector2.ONE * 0.42)
 		),
 		ACTOR_PLAYER_ATTENDANT_MALE: _build_prologue_npc_entry(
-			Color(0.72, 0.66, 0.88, 1.0),
+			Color(0.96, 0.78, 0.34, 1.0),  # warm candlelight gold — visually
+			# distinct from the bookstore-keeper-tinted NPCs so the player
+			# is unambiguous on the map. Painted BS-01 attendant is wired
+			# as the battle sprite; map sprite stays on the fighter walk
+			# sheet for now (single_frame_directions over the painted PNG
+			# rendered invisible on the live game, needs deeper debug).
 			"",
 			"res://assets/proprietary/production/sprites/player_attendant_male_battle_v01.png",
-			{
-				# Map sprite: use the painted BS-01 attendant as a static
-				# single-pose for all four facings. Lose the walk animation,
-				# gain visual identity and parity with the painted backdrops.
-				"type": "single_frame_directions",
-				"path": "res://assets/proprietary/production/sprites/player_attendant_male_battle_v01.png",
-				"offset": Vector2(0.0, -14.0),
-				"scale": Vector2(0.06, 0.06),
-				"modulate": Color(1.0, 1.0, 1.0, 1.0),
-			},
+			_build_directional_map_entry(FIGHTER_MAP_SHEET_PATH, Color(0.96, 0.78, 0.34, 1.0)),
 			88.0
 		),
 		ACTOR_PLAYER_ATTENDANT_FEMALE: _build_player_attendant_female_entry(),
