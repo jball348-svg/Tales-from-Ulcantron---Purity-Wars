@@ -173,12 +173,16 @@ func _verify_inciting_full_sequence() -> void:
 		await get_tree().process_frame
 		if SceneManager.current_state_name == "character_creation":
 			break
-	_assert(bool(PlayerData.get_flag("prologue_choice_round1", "")) != false,
+	# Note: prior `bool(PlayerData.get_flag(...))` raised "Invalid call.
+	# Nonexistent 'bool' constructor" in Godot 4.6 — bool() can't take a Variant
+	# arg as a type-cast. Stringify first, then check non-empty (a set flag in
+	# this codebase is always a non-empty choice string like "defend").
+	_assert(str(PlayerData.get_flag("prologue_choice_round1", "")) != "",
 		"Inciting: prologue_choice_round1 flag set after round 1 (got: %s)" % str(PlayerData.get_flag("prologue_choice_round1", "")))
-	_assert(bool(PlayerData.get_flag("prologue_choice_round2", "")) != false,
-		"Inciting: prologue_choice_round2 flag set after round 2")
-	_assert(bool(PlayerData.get_flag("prologue_choice_round3", "")) != false,
-		"Inciting: prologue_choice_round3 flag set after round 3")
+	_assert(str(PlayerData.get_flag("prologue_choice_round2", "")) != "",
+		"Inciting: prologue_choice_round2 flag set after round 2 (got: %s)" % str(PlayerData.get_flag("prologue_choice_round2", "")))
+	_assert(str(PlayerData.get_flag("prologue_choice_round3", "")) != "",
+		"Inciting: prologue_choice_round3 flag set after round 3 (got: %s)" % str(PlayerData.get_flag("prologue_choice_round3", "")))
 
 func _await_dialogue_active(max_frames: int, message: String) -> void:
 	var frames := 0
