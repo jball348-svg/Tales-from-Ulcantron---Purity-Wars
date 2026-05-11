@@ -76,10 +76,10 @@ func _run_tests() -> void:
 	_assert_scene_node("ExitTrigger", "PrologueChapel has ExitTrigger")
 	_assert_scene_node("Bounds/Min", "PrologueChapel has Bounds/Min")
 	_assert_scene_node("Bounds/Max", "PrologueChapel has Bounds/Max")
-	_assert_scene_node("NorthDais", "PrologueChapel has chapel dais geometry")
-	_assert_scene_node("AltarStone", "PrologueChapel has altar geometry")
-	_assert_scene_node("LeftPewA", "PrologueChapel has pew geometry")
-	_assert_scene_node("RightPewA", "PrologueChapel has mirrored pew geometry")
+	_assert_scene_node("Background", "PrologueChapel has painted backdrop Sprite2D")
+	var chapel_bg := _current_scene_node("Background") as Sprite2D
+	_assert(chapel_bg != null and chapel_bg.texture != null,
+		"PrologueChapel painted backdrop has a texture assigned")
 	_assert_scene_node("PewNpcA", "PrologueChapel has PewNpcA")
 	_assert_scene_node("PewNpcB", "PrologueChapel has PewNpcB")
 	_assert_scene_node("TempleAttendant", "PrologueChapel has TempleAttendant")
