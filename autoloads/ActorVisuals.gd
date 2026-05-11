@@ -23,6 +23,16 @@ const ACTOR_QUEEN := "queen"
 const ACTOR_CAPTAIN_ROYAL_GUARD := "captain_royal_guard"
 const ACTOR_INITIATE := "initiate"
 
+# Player attendant identities — used during the prologue (before character
+# creation). Two gender presentations matching CH-01/CH-02 and BS-01. The
+# active presentation is selected via PlayerData.attendant_presentation (set
+# by the pre-prologue gender-selector scene, planned in Batch C). Map sprites
+# fall back to the LPC bookstore region until a sprite-sheet-specialised
+# pipeline produces walking sheets; the battle entries point at the single-
+# pose painted Gemini renders that ship in the BS-01 drop.
+const ACTOR_PLAYER_ATTENDANT_MALE := "player_attendant_male"
+const ACTOR_PLAYER_ATTENDANT_FEMALE := "player_attendant_female"
+
 const FIGHTER_MAP_SHEET_PATH := "res://assets/art/external/stage_8_5/fighter_walk_sheet.png"
 const BATTLEMAGE_MAP_SHEET_PATH := "res://assets/art/external/stage_8_5/battlemage_walk_sheet.png"
 const LPC_SPRITE_SHEET_PATH := "res://assets/art/player/universal-lpc-sprite_male_01_full.png"
@@ -417,17 +427,32 @@ func _ensure_registry() -> void:
 		ACTOR_PRINCESS: _build_prologue_npc_entry(Color(0.84, 0.68, 0.96, 1.0), "res://assets/proprietary/production/portraits/princess_portrait_v01.png"),
 		ACTOR_KING_ALDREN: _build_prologue_npc_entry(Color(0.74, 0.62, 0.34, 1.0), "res://assets/proprietary/production/portraits/king_aldren_portrait_v01.png"),
 		ACTOR_QUEEN: _build_prologue_npc_entry(Color(0.96, 0.86, 0.78, 1.0), "res://assets/proprietary/production/portraits/queen_portrait_v01.png"),
-		ACTOR_CAPTAIN_ROYAL_GUARD: _build_prologue_npc_entry(Color(0.42, 0.42, 0.52, 1.0), "res://assets/proprietary/production/portraits/captain_royal_guard_portrait_v01.png"),
+		ACTOR_CAPTAIN_ROYAL_GUARD: _build_prologue_npc_entry(
+			Color(0.42, 0.42, 0.52, 1.0),
+			"res://assets/proprietary/production/portraits/captain_royal_guard_portrait_v01.png",
+			"res://assets/proprietary/production/sprites/captain_royal_guard_battle_v01.png"
+		),
 		ACTOR_INITIATE: _build_prologue_npc_entry(Color(0.92, 0.88, 0.82, 1.0)),
+		ACTOR_PLAYER_ATTENDANT_MALE: _build_prologue_npc_entry(
+			Color(0.72, 0.66, 0.88, 1.0),
+			"",
+			"res://assets/proprietary/production/sprites/player_attendant_male_battle_v01.png"
+		),
+		ACTOR_PLAYER_ATTENDANT_FEMALE: _build_prologue_npc_entry(
+			Color(0.76, 0.66, 0.92, 1.0)
+		),
 	}
 
-func _build_prologue_npc_entry(tint: Color, portrait_path: String = "") -> Dictionary:
+func _build_prologue_npc_entry(tint: Color, portrait_path: String = "", battle_path: String = "") -> Dictionary:
 	# Hybrid placeholder/proprietary registration. Map sprites still share the
-	# LPC universal-sprite bookstore region tinted by `tint` until the per-
-	# character CH map sheets land (next art batch). When `portrait_path` is
-	# provided, the dialogue portrait swaps to a proprietary 512x512 texture;
-	# otherwise the portrait also falls back to the tinted LPC region so the
-	# prologue still renders end-to-end.
+	# LPC universal-sprite bookstore region tinted by `tint` until a sprite-
+	# sheet-specialised pipeline produces proper walking sheets. When
+	# `portrait_path` is provided, the dialogue portrait swaps to a proprietary
+	# painted texture; otherwise the portrait falls back to the tinted LPC
+	# region so the prologue still renders end-to-end. When `battle_path` is
+	# provided, the actor gains a proprietary single-pose painted battle
+	# sprite — used by Battle.gd at PLAYER_IDLE_POSITION / ENEMY_IDLE_POSITION
+	# during the unwinnable fight refactor.
 	var portrait_entry: Dictionary
 	if portrait_path != "":
 		portrait_entry = { "type": "texture", "path": portrait_path }
@@ -437,6 +462,9 @@ func _build_prologue_npc_entry(tint: Color, portrait_path: String = "") -> Dicti
 			"path": LPC_SPRITE_SHEET_PATH,
 			"region": LPC_BOOKSTORE_REGION,
 		}
+	var battle_entry: Dictionary = {}
+	if battle_path != "":
+		battle_entry = { "type": "texture", "path": battle_path }
 	return {
 		"accent": tint,
 		"map": {
@@ -447,7 +475,7 @@ func _build_prologue_npc_entry(tint: Color, portrait_path: String = "") -> Dicti
 			"scale": DEFAULT_MAP_SCALE,
 			"modulate": tint,
 		},
-		"battle": {},
+		"battle": battle_entry,
 		"portrait": portrait_entry,
 		"cutscene": {},
 		"follower": {},
