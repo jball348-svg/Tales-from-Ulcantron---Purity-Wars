@@ -37,28 +37,13 @@ func _ready() -> void:
 		_play_fade_in()
 
 func _apply_player_indicator() -> void:
-	# Placeholder-phase aid: during the LPC-bookstore-tinted prologue,
-	# the player sprite blends with the NPC sprites because every prologue
-	# actor currently shares the same atlas region. Add a small overhead
-	# label so the player can always find themselves. Once proprietary CH
-	# map sprites land (Batch B+), this indicator can be removed.
-	if not is_instance_valid(player):
-		return
-	if player.get_node_or_null("PlayerIndicator") != null:
-		return
-	var indicator := Label.new()
-	indicator.name = "PlayerIndicator"
-	indicator.text = "▼ you"
-	indicator.add_theme_font_size_override("font_size", 8)
-	indicator.add_theme_color_override("font_color", Color(0.96, 0.84, 0.32, 1.0))
-	indicator.add_theme_color_override("font_outline_color", Color(0.02, 0.02, 0.05, 1.0))
-	indicator.add_theme_constant_override("outline_size", 3)
-	indicator.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	indicator.position = Vector2(-20.0, -36.0)
-	indicator.custom_minimum_size = Vector2(40.0, 0.0)
-	indicator.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	indicator.z_index = 10
-	player.add_child(indicator)
+	# Disabled. The early-prologue "▼ you" placeholder label was a crutch for the
+	# LPC-bookstore-tinted placeholder phase. Now that NPCs have distinct
+	# sheet_frame placements and the player has an identifying tint, the
+	# indicator just clutters the playable area. Kept as a no-op so existing
+	# call sites in PrologueRoom._ready continue to work; remove the call site
+	# entirely in a later cleanup if no flow regresses.
+	pass
 
 func _connect_trigger() -> void:
 	if exit_trigger != null and not exit_trigger.body_entered.is_connected(_on_exit_trigger_body_entered):
@@ -147,6 +132,26 @@ func _configure_camera() -> void:
 	var top_left_y := minf(min_marker.global_position.y, max_marker.global_position.y)
 	var bottom_right_x := maxf(min_marker.global_position.x, max_marker.global_position.x)
 	var bottom_right_y := maxf(min_marker.global_position.y, max_marker.global_position.y)
+	# Godot 4 Camera2D limit_* values clamp the visible viewport edges to the
+	# world bounds — the camera will not show pixels beyond these positions.
+	# If the world is smaller than the viewport in either axis, the limits
+	# would force the camera into an impossible state (limit_right < limit_left
+	# + viewport_width), producing black bars and an off-centre player.
+	# In that case, widen the limits symmetrically around the world centre so
+	# the viewport exactly matches the larger of (world, viewport). This means
+	# small worlds get black bars only beyond the world edge symmetrically
+	# rather than asymmetrically at one side.
+	var viewport_size: Vector2 = map_camera.get_viewport_rect().size
+	var world_w: float = bottom_right_x - top_left_x
+	var world_h: float = bottom_right_y - top_left_y
+	if world_w < viewport_size.x:
+		var world_center_x: float = (top_left_x + bottom_right_x) * 0.5
+		top_left_x = world_center_x - viewport_size.x * 0.5
+		bottom_right_x = world_center_x + viewport_size.x * 0.5
+	if world_h < viewport_size.y:
+		var world_center_y: float = (top_left_y + bottom_right_y) * 0.5
+		top_left_y = world_center_y - viewport_size.y * 0.5
+		bottom_right_y = world_center_y + viewport_size.y * 0.5
 	map_camera.limit_left = int(top_left_x)
 	map_camera.limit_top = int(top_left_y)
 	map_camera.limit_right = int(bottom_right_x)

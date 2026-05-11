@@ -11,10 +11,10 @@ size = Vector2(20, 20)
 size = Vector2(480, 16)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_passage_wall_vertical_left"]
-size = Vector2(16, 220)
+size = Vector2(16, 270)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_passage_wall_vertical_right"]
-size = Vector2(16, 220)
+size = Vector2(16, 270)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_passage_exit_trigger"]
 size = Vector2(48, 24)
@@ -26,14 +26,14 @@ ambient_music_cue = "town"
 
 [node name="BackdropFill" type="ColorRect" parent="."]
 position = Vector2(0, 0)
-size = Vector2(480, 220)
+size = Vector2(480, 270)
 color = Color(0.04, 0.04, 0.06, 1)
 mouse_filter = 2
 
 [node name="Background" type="Sprite2D" parent="."]
 texture_filter = 1
-position = Vector2(240, 110)
-scale = Vector2(2.2, 2.2)
+position = Vector2(240, 135)
+scale = Vector2(2.2, 2.7)
 modulate = Color(0.55, 0.55, 0.70, 0.75)
 texture = ExtResource("2_passage_bg")
 
@@ -44,19 +44,19 @@ position = Vector2(240, 8)
 shape = SubResource("RectangleShape2D_passage_wall_horizontal")
 
 [node name="WallBottom" type="CollisionShape2D" parent="WorldCollision"]
-position = Vector2(240, 212)
+position = Vector2(240, 262)
 shape = SubResource("RectangleShape2D_passage_wall_horizontal")
 
 [node name="WallLeft" type="CollisionShape2D" parent="WorldCollision"]
-position = Vector2(8, 110)
+position = Vector2(8, 135)
 shape = SubResource("RectangleShape2D_passage_wall_vertical_left")
 
 [node name="WallRight" type="CollisionShape2D" parent="WorldCollision"]
-position = Vector2(472, 110)
+position = Vector2(472, 135)
 shape = SubResource("RectangleShape2D_passage_wall_vertical_right")
 
 [node name="PlayerSpawn" type="Marker2D" parent="."]
-position = Vector2(40, 110)
+position = Vector2(40, 135)
 
 [node name="Bounds" type="Node2D" parent="."]
 
@@ -64,10 +64,10 @@ position = Vector2(40, 110)
 position = Vector2(0, 0)
 
 [node name="Max" type="Marker2D" parent="Bounds"]
-position = Vector2(480, 220)
+position = Vector2(480, 270)
 
 [node name="Player" type="CharacterBody2D" parent="."]
-position = Vector2(40, 110)
+position = Vector2(40, 135)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
 shape = SubResource("RectangleShape2D_passage_player")
@@ -83,43 +83,23 @@ position_smoothing_speed = 8.0
 [node name="ExitTrigger" type="Area2D" parent="."]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ExitTrigger"]
-position = Vector2(456, 110)
+position = Vector2(456, 135)
 shape = SubResource("RectangleShape2D_passage_exit_trigger")
 
 [node name="EntryMarker" type="ColorRect" parent="."]
-position = Vector2(16, 96)
+position = Vector2(16, 121)
 size = Vector2(14, 28)
-color = Color(0.55, 0.42, 0.78, 0.70)
+color = Color(0.55, 0.42, 0.78, 0.55)
 mouse_filter = 2
-
-[node name="EntryLabel" type="Label" parent="EntryMarker"]
-position = Vector2(0, 28)
-size = Vector2(56, 12)
-text = "← chapel"
-horizontal_alignment = 0
-theme_override_font_sizes/font_size = 8
-theme_override_colors/font_color = Color(0.86, 0.78, 0.62, 1.0)
-theme_override_colors/font_outline_color = Color(0.02, 0.02, 0.05, 1.0)
-theme_override_constants/outline_size = 3
 
 [node name="ExitMarker" type="ColorRect" parent="."]
-position = Vector2(450, 96)
+position = Vector2(450, 121)
 size = Vector2(14, 28)
-color = Color(0.96, 0.78, 0.34, 0.85)
+color = Color(0.96, 0.78, 0.34, 0.75)
 mouse_filter = 2
 
-[node name="ExitLabel" type="Label" parent="ExitMarker"]
-position = Vector2(-44, 28)
-size = Vector2(60, 12)
-text = "dais →"
-horizontal_alignment = 2
-theme_override_font_sizes/font_size = 8
-theme_override_colors/font_color = Color(0.96, 0.84, 0.32, 1.0)
-theme_override_colors/font_outline_color = Color(0.02, 0.02, 0.05, 1.0)
-theme_override_constants/outline_size = 3
-
 [node name="Steward" parent="." instance=ExtResource("3_npc")]
-position = Vector2(240, 110)
+position = Vector2(240, 135)
 npc_id = "prologue_side_passage_steward"
 npc_name = "Palace Steward"
 actor_id = "steward"

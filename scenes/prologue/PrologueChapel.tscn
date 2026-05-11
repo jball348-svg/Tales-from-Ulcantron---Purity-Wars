@@ -7,7 +7,7 @@
 size = Vector2(20, 20)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_chapel_wall_top"]
-size = Vector2(256, 16)
+size = Vector2(268, 16)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_chapel_wall_bottom"]
 size = Vector2(592, 16)
@@ -131,11 +131,11 @@ mouse_filter = 2
 [node name="WorldCollision" type="StaticBody2D" parent="."]
 
 [node name="WallTopLeft" type="CollisionShape2D" parent="WorldCollision"]
-position = Vector2(152, 16)
+position = Vector2(158, 16)
 shape = SubResource("RectangleShape2D_chapel_wall_top")
 
 [node name="WallTopRight" type="CollisionShape2D" parent="WorldCollision"]
-position = Vector2(488, 16)
+position = Vector2(482, 16)
 shape = SubResource("RectangleShape2D_chapel_wall_top")
 
 [node name="WallBottom" type="CollisionShape2D" parent="WorldCollision"]
@@ -192,24 +192,14 @@ shape = SubResource("RectangleShape2D_chapel_exit_trigger")
 [node name="EntryMarker" type="ColorRect" parent="."]
 position = Vector2(296, 332)
 size = Vector2(48, 8)
-color = Color(0.55, 0.42, 0.78, 0.70)
+color = Color(0.55, 0.42, 0.78, 0.55)
 mouse_filter = 2
 
 [node name="ExitMarker" type="ColorRect" parent="."]
 position = Vector2(292, 20)
 size = Vector2(56, 10)
-color = Color(0.96, 0.78, 0.34, 0.85)
+color = Color(0.96, 0.78, 0.34, 0.75)
 mouse_filter = 2
-
-[node name="ExitLabel" type="Label" parent="ExitMarker"]
-position = Vector2(-16, 12)
-size = Vector2(88, 12)
-text = "altar door"
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 8
-theme_override_colors/font_color = Color(0.96, 0.84, 0.32, 1.0)
-theme_override_colors/font_outline_color = Color(0.02, 0.02, 0.05, 1.0)
-theme_override_constants/outline_size = 3
 
 [node name="PewNpcA" parent="." instance=ExtResource("2_npc")]
 position = Vector2(190, 204)
