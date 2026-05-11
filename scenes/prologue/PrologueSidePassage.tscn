@@ -86,6 +86,38 @@ position_smoothing_speed = 8.0
 position = Vector2(456, 110)
 shape = SubResource("RectangleShape2D_passage_exit_trigger")
 
+[node name="EntryMarker" type="ColorRect" parent="."]
+position = Vector2(16, 96)
+size = Vector2(14, 28)
+color = Color(0.55, 0.42, 0.78, 0.70)
+mouse_filter = 2
+
+[node name="EntryLabel" type="Label" parent="EntryMarker"]
+position = Vector2(0, 28)
+size = Vector2(56, 12)
+text = "← chapel"
+horizontal_alignment = 0
+theme_override_font_sizes/font_size = 8
+theme_override_colors/font_color = Color(0.86, 0.78, 0.62, 1.0)
+theme_override_colors/font_outline_color = Color(0.02, 0.02, 0.05, 1.0)
+theme_override_constants/outline_size = 3
+
+[node name="ExitMarker" type="ColorRect" parent="."]
+position = Vector2(450, 96)
+size = Vector2(14, 28)
+color = Color(0.96, 0.78, 0.34, 0.85)
+mouse_filter = 2
+
+[node name="ExitLabel" type="Label" parent="ExitMarker"]
+position = Vector2(-44, 28)
+size = Vector2(60, 12)
+text = "dais →"
+horizontal_alignment = 2
+theme_override_font_sizes/font_size = 8
+theme_override_colors/font_color = Color(0.96, 0.84, 0.32, 1.0)
+theme_override_colors/font_outline_color = Color(0.02, 0.02, 0.05, 1.0)
+theme_override_constants/outline_size = 3
+
 [node name="Steward" parent="." instance=ExtResource("3_npc")]
 position = Vector2(240, 110)
 npc_id = "prologue_side_passage_steward"

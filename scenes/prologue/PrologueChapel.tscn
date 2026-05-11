@@ -96,6 +96,38 @@ position_smoothing_speed = 8.0
 position = Vector2(320, 16)
 shape = SubResource("RectangleShape2D_chapel_exit_trigger")
 
+[node name="EntryMarker" type="ColorRect" parent="."]
+position = Vector2(296, 340)
+size = Vector2(48, 14)
+color = Color(0.55, 0.42, 0.78, 0.70)
+mouse_filter = 2
+
+[node name="EntryLabel" type="Label" parent="EntryMarker"]
+position = Vector2(-8, -14)
+size = Vector2(64, 12)
+text = "↓ entry"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 8
+theme_override_colors/font_color = Color(0.86, 0.78, 0.62, 1.0)
+theme_override_colors/font_outline_color = Color(0.02, 0.02, 0.05, 1.0)
+theme_override_constants/outline_size = 3
+
+[node name="ExitMarker" type="ColorRect" parent="."]
+position = Vector2(296, 4)
+size = Vector2(48, 14)
+color = Color(0.96, 0.78, 0.34, 0.85)
+mouse_filter = 2
+
+[node name="ExitLabel" type="Label" parent="ExitMarker"]
+position = Vector2(-8, 14)
+size = Vector2(64, 12)
+text = "↑ altar door"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 8
+theme_override_colors/font_color = Color(0.96, 0.84, 0.32, 1.0)
+theme_override_colors/font_outline_color = Color(0.02, 0.02, 0.05, 1.0)
+theme_override_constants/outline_size = 3
+
 [node name="PewNpcA" parent="." instance=ExtResource("3_npc")]
 position = Vector2(192, 200)
 npc_id = "prologue_chapel_pew_pair_a"

@@ -25,6 +25,7 @@ func _ready() -> void:
 	var payload := SceneManager.consume_state_payload()
 	_connect_trigger()
 	_apply_player_visuals()
+	_apply_player_indicator()
 	_apply_npc_visuals()
 	_configure_camera()
 	map_camera.make_current()
@@ -34,6 +35,30 @@ func _ready() -> void:
 		AudioManager.play_music(ambient_music_cue)
 	if bool(payload.get("fade_from_black", false)) or str(payload.get("source", "")) == "new_game":
 		_play_fade_in()
+
+func _apply_player_indicator() -> void:
+	# Placeholder-phase aid: during the LPC-bookstore-tinted prologue,
+	# the player sprite blends with the NPC sprites because every prologue
+	# actor currently shares the same atlas region. Add a small overhead
+	# label so the player can always find themselves. Once proprietary CH
+	# map sprites land (Batch B+), this indicator can be removed.
+	if not is_instance_valid(player):
+		return
+	if player.get_node_or_null("PlayerIndicator") != null:
+		return
+	var indicator := Label.new()
+	indicator.name = "PlayerIndicator"
+	indicator.text = "▼ you"
+	indicator.add_theme_font_size_override("font_size", 8)
+	indicator.add_theme_color_override("font_color", Color(0.96, 0.84, 0.32, 1.0))
+	indicator.add_theme_color_override("font_outline_color", Color(0.02, 0.02, 0.05, 1.0))
+	indicator.add_theme_constant_override("outline_size", 3)
+	indicator.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	indicator.position = Vector2(-20.0, -36.0)
+	indicator.custom_minimum_size = Vector2(40.0, 0.0)
+	indicator.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	indicator.z_index = 10
+	player.add_child(indicator)
 
 func _connect_trigger() -> void:
 	if exit_trigger != null and not exit_trigger.body_entered.is_connected(_on_exit_trigger_body_entered):
