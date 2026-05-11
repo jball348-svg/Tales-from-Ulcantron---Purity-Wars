@@ -5,7 +5,7 @@
       "speaker": "Captain of the Royal Guard",
       "text": "[POLISH PASS] Stand down. I do not want to do this in front of a child.",
       "portrait_id": "captain_royal_guard",
-      "portrait": "",
+      "portrait": "res://assets/proprietary/production/portraits/captain_royal_guard_portrait_v01.png",
       "conditions": [],
       "next": 1
     },
@@ -13,7 +13,7 @@
       "speaker": "Captain of the Royal Guard",
       "text": "[POLISH PASS] You picked the wrong morning to be brave.",
       "portrait_id": "captain_royal_guard",
-      "portrait": "",
+      "portrait": "res://assets/proprietary/production/portraits/captain_royal_guard_portrait_v01.png",
       "conditions": [],
       "next": 2
     },
@@ -21,7 +21,7 @@
       "speaker": "Princess",
       "text": "[POLISH PASS] Stop. Stop. Stop it — leave them alone.",
       "portrait_id": "princess",
-      "portrait": "",
+      "portrait": "res://assets/proprietary/production/portraits/princess_portrait_v01.png",
       "conditions": [],
       "next": 3
     },
@@ -29,7 +29,7 @@
       "speaker": "Queen",
       "text": "[POLISH PASS] Enough, Aldren. Enough.",
       "portrait_id": "queen",
-      "portrait": "",
+      "portrait": "res://assets/proprietary/production/portraits/queen_portrait_v01.png",
       "conditions": [],
       "next": 4
     },
@@ -37,7 +37,7 @@
       "speaker": "King Aldren",
       "text": "[POLISH PASS] Take the initiate. The chapel is closed.",
       "portrait_id": "king_aldren",
-      "portrait": "",
+      "portrait": "res://assets/proprietary/production/portraits/king_aldren_portrait_v01.png",
       "conditions": [],
       "next": -1
     }

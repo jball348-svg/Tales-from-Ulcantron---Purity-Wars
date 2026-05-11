@@ -414,19 +414,29 @@ func _ensure_registry() -> void:
 		ACTOR_PEW_NPC_D: _build_prologue_npc_entry(Color(0.66, 0.84, 0.66, 1.0)),
 		ACTOR_TEMPLE_ATTENDANT: _build_prologue_npc_entry(Color(0.96, 0.92, 0.78, 1.0)),
 		ACTOR_STEWARD: _build_prologue_npc_entry(Color(0.62, 0.52, 0.78, 1.0)),
-		ACTOR_PRINCESS: _build_prologue_npc_entry(Color(0.84, 0.68, 0.96, 1.0)),
-		ACTOR_KING_ALDREN: _build_prologue_npc_entry(Color(0.74, 0.62, 0.34, 1.0)),
-		ACTOR_QUEEN: _build_prologue_npc_entry(Color(0.96, 0.86, 0.78, 1.0)),
-		ACTOR_CAPTAIN_ROYAL_GUARD: _build_prologue_npc_entry(Color(0.42, 0.42, 0.52, 1.0)),
+		ACTOR_PRINCESS: _build_prologue_npc_entry(Color(0.84, 0.68, 0.96, 1.0), "res://assets/proprietary/production/portraits/princess_portrait_v01.png"),
+		ACTOR_KING_ALDREN: _build_prologue_npc_entry(Color(0.74, 0.62, 0.34, 1.0), "res://assets/proprietary/production/portraits/king_aldren_portrait_v01.png"),
+		ACTOR_QUEEN: _build_prologue_npc_entry(Color(0.96, 0.86, 0.78, 1.0), "res://assets/proprietary/production/portraits/queen_portrait_v01.png"),
+		ACTOR_CAPTAIN_ROYAL_GUARD: _build_prologue_npc_entry(Color(0.42, 0.42, 0.52, 1.0), "res://assets/proprietary/production/portraits/captain_royal_guard_portrait_v01.png"),
 		ACTOR_INITIATE: _build_prologue_npc_entry(Color(0.92, 0.88, 0.82, 1.0)),
 	}
 
-func _build_prologue_npc_entry(tint: Color) -> Dictionary:
-	# Placeholder registration — every prologue NPC currently shares the LPC
-	# universal-sprite bookstore region tinted by `tint`. Proprietary
-	# replacements per character will arrive in a later art pass; until then
-	# the tint provides enough visual differentiation in the chapel and side
-	# passage placeholder rooms.
+func _build_prologue_npc_entry(tint: Color, portrait_path: String = "") -> Dictionary:
+	# Hybrid placeholder/proprietary registration. Map sprites still share the
+	# LPC universal-sprite bookstore region tinted by `tint` until the per-
+	# character CH map sheets land (next art batch). When `portrait_path` is
+	# provided, the dialogue portrait swaps to a proprietary 512x512 texture;
+	# otherwise the portrait also falls back to the tinted LPC region so the
+	# prologue still renders end-to-end.
+	var portrait_entry: Dictionary
+	if portrait_path != "":
+		portrait_entry = { "type": "texture", "path": portrait_path }
+	else:
+		portrait_entry = {
+			"type": "atlas",
+			"path": LPC_SPRITE_SHEET_PATH,
+			"region": LPC_BOOKSTORE_REGION,
+		}
 	return {
 		"accent": tint,
 		"map": {
@@ -438,11 +448,7 @@ func _build_prologue_npc_entry(tint: Color) -> Dictionary:
 			"modulate": tint,
 		},
 		"battle": {},
-		"portrait": {
-			"type": "atlas",
-			"path": LPC_SPRITE_SHEET_PATH,
-			"region": LPC_BOOKSTORE_REGION,
-		},
+		"portrait": portrait_entry,
 		"cutscene": {},
 		"follower": {},
 	}
