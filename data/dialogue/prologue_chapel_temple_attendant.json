@@ -3,7 +3,7 @@
   "nodes": [
     {
       "speaker": "Temple Attendant",
-      "text": "[POLISH PASS] Mind the censer. The smoke catches in the rear hall today.",
+      "text": "Mind the censer. The smoke catches in the rear hall today.",
       "portrait_id": "temple_attendant",
       "portrait": "",
       "conditions": [],
@@ -11,7 +11,7 @@
     },
     {
       "speaker": "Temple Attendant",
-      "text": "[POLISH PASS] Off you go. The Steward is waiting in the side passage.",
+      "text": "Off you go. The Steward is waiting in the side passage.",
       "portrait_id": "temple_attendant",
       "portrait": "",
       "conditions": [],

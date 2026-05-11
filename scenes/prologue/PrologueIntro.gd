@@ -12,7 +12,6 @@ const FADE_OUT_DURATION := 0.6
 
 @onready var _line_one: Label = $LineOne
 @onready var _line_two: Label = $LineTwo
-@onready var _press_hint: Label = $PressHint
 
 var _transitioning := false
 
@@ -23,7 +22,10 @@ func _ready() -> void:
 	_line_two.text = ""
 	_line_two.visible_characters = 0
 	_line_two.visible = false
-	_press_hint.visible = false
+	if _line_one.has_method("set"):
+		_line_one.set("skippable", false)
+	if _line_two.has_method("set"):
+		_line_two.set("skippable", false)
 	_clear_fade()
 	_play_intro_sequence()
 
@@ -34,9 +36,7 @@ func _clear_fade() -> void:
 
 func _play_intro_sequence() -> void:
 	await _line_one.reveal(LINE_ONE)
-	_press_hint.visible = true
 	await get_tree().create_timer(PAUSE_AFTER_LINE_ONE).timeout
-	_press_hint.visible = false
 	_line_two.visible = true
 	await _line_two.reveal(LINE_TWO)
 	await get_tree().create_timer(PAUSE_AFTER_LINE_TWO).timeout
@@ -55,14 +55,3 @@ func _advance() -> void:
 		"source": "prologue_intro",
 		"fade_from_black": true,
 	})
-
-func _unhandled_input(event: InputEvent) -> void:
-	# Pressing Space/Enter at any point skips the rest of the sequence.
-	if _transitioning:
-		return
-	if event.is_action_pressed("ui_accept") or event.is_action_pressed("ui_select"):
-		get_viewport().set_input_as_handled()
-		# If a typewriter is mid-reveal, the TypewriterLabel handles its own
-		# instant-reveal; otherwise jump straight to the next state.
-		if not _line_one.is_revealing() and not _line_two.is_revealing():
-			_advance()

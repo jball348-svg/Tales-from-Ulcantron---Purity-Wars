@@ -39,17 +39,18 @@ alignment = 1
 
 [node name="Heading" type="Label" parent="Center/Layout"]
 horizontal_alignment = 1
-text = "Choose your starting path."
+text = "Character Creation"
 theme_override_font_sizes/font_size = 16
 
 [node name="PathSummary" type="Label" parent="Center/Layout"]
 horizontal_alignment = 1
 autowrap_mode = 3
 modulate = Color(0.92, 0.88, 0.78, 0.92)
-text = ""
+text = "The prologue currently ends here. Character creation will open this slot next."
 theme_override_font_sizes/font_size = 10
 
 [node name="PathButtons" type="HBoxContainer" parent="Center/Layout"]
+visible = false
 alignment = 1
 theme_override_constants/separation = 16
 
@@ -66,5 +67,6 @@ theme_override_font_sizes/font_size = 12
 [node name="BeginButton" type="Button" parent="Center/Layout"]
 custom_minimum_size = Vector2(180, 32)
 size_flags_horizontal = 4
-text = "Begin Your Journey"
+disabled = true
+text = "Coming Soon"
 theme_override_font_sizes/font_size = 12

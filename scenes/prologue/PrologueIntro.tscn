@@ -42,6 +42,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 theme_override_font_sizes/font_size = 14
 script = ExtResource("2_typewriter")
+skippable = false
 
 [node name="LineTwo" type="Label" parent="."]
 layout_mode = 1
@@ -60,21 +61,4 @@ horizontal_alignment = 1
 vertical_alignment = 1
 theme_override_font_sizes/font_size = 14
 script = ExtResource("2_typewriter")
-
-[node name="PressHint" type="Label" parent="."]
-layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -120.0
-offset_top = -28.0
-offset_right = 120.0
-offset_bottom = -8.0
-grow_horizontal = 2
-grow_vertical = 0
-horizontal_alignment = 1
-modulate = Color(0.93, 0.90, 0.84, 0.5)
-text = "Press Space"
-theme_override_font_sizes/font_size = 8
+skippable = false

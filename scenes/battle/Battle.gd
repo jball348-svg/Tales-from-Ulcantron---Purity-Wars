@@ -14,6 +14,7 @@ const UI_BUTTON_DISABLED_TEXTURE_PATH := "res://assets/art/UI/kenney_ui-pack-rpg
 
 const BATTLE_KIND_STANDARD := "standard"
 const BATTLE_KIND_BOSS_SHAMAN := "boss_shaman"
+const BATTLE_KIND_PROLOGUE_CAPTAIN := "prologue_captain"
 
 const MINE_ENCOUNTER_PROGRESS_FLAG := "mine_encounter_progress"
 const MINE_BOSS_READY_FLAG := "mine_boss_ready"
@@ -38,6 +39,13 @@ const SHAMAN_XP_REWARD := 80
 const SHAMAN_TALISMAN_LABEL := "Shaman's Talisman"
 const HEALTH_POTION_HEAL := 20
 const HUD_TAB_STATS := "stats"
+const CAPTAIN_MAX_HP := 999
+const CAPTAIN_PLAYER_MAX_HP := 30
+const CAPTAIN_ATTACK_DAMAGE_BY_ROUND := [6, 11, 28]
+const CAPTAIN_DEFEND_REDUCTION := 4
+const PROLOGUE_CHOICE_DEFEND := "defend"
+const PROLOGUE_CHOICE_STRIKE := "strike"
+const PROLOGUE_CHOICE_CLEVER := "clever"
 
 const PLAYER_TARGET_HEIGHT := 88.0
 const ENEMY_TARGET_HEIGHT := 78.0
@@ -117,8 +125,11 @@ var _enemy_staggered := false
 var _input_locked := true
 var _battle_over := false
 var _shaman_boss_mode := false
+var _prologue_captain_mode := false
 var _shaman_heal_used := false
 var _player_hexed := false
+var _prologue_round_index := 0
+var _last_prologue_choice := ""
 var _bob_time := 0.0
 var _player_class_id := ""
 var _last_viewport_size := Vector2.ZERO
@@ -427,12 +438,25 @@ func _configure_battle_state() -> void:
 		_player_class_id = PlayerData.resolve_class_id()
 
 	_shaman_boss_mode = _encounter_kind() == BATTLE_KIND_BOSS_SHAMAN
+	_prologue_captain_mode = _encounter_kind() == BATTLE_KIND_PROLOGUE_CAPTAIN
 	_shaman_heal_used = false
 	_player_hexed = false
 	_enemy_defend_active = false
 	_enemy_staggered = false
+	_prologue_round_index = 0
+	_last_prologue_choice = ""
 
-	if _shaman_boss_mode:
+	if _prologue_captain_mode:
+		_enemy_max_hp = CAPTAIN_MAX_HP
+		_enemy_hp = CAPTAIN_MAX_HP
+		_enemy_attack_damage = 0
+		_enemy_defence = 999
+		_enemy_resistance = 999
+		_enemy_defend_bonus = 0
+		_enemy_display_name = "Captain"
+		_enemy_intro_log = "The Captain raises his blade. This is not a fair fight."
+		PlayerData.current_hp = CAPTAIN_PLAYER_MAX_HP
+	elif _shaman_boss_mode:
 		_enemy_max_hp = SHAMAN_MAX_HP
 		_enemy_hp = SHAMAN_MAX_HP
 		_enemy_attack_damage = SHAMAN_ATTACK_DAMAGE
@@ -453,15 +477,15 @@ func _configure_battle_state() -> void:
 
 	_apply_battle_sprite_art()
 	PlayerData.ensure_starting_inventory()
-	if PlayerData.current_hp <= 0:
+	if PlayerData.current_hp <= 0 and not _prologue_captain_mode:
 		PlayerData.restore_hp_full()
 
-	_player_name_label.text = PlayerData.get_display_class()
+	_player_name_label.text = "Attendant" if _prologue_captain_mode else PlayerData.get_display_class()
 	_enemy_name_label.text = _enemy_display_name
 	_player_portrait_texture.texture = _load_player_presentation_card()
 	_enemy_portrait_texture.texture = _load_enemy_presentation_card()
 	_append_log(_enemy_intro_log)
-	AudioManager.play_music(AudioManager.CUE_BOSS if _shaman_boss_mode else AudioManager.CUE_BATTLE)
+	AudioManager.play_music(AudioManager.CUE_BOSS if _shaman_boss_mode or _prologue_captain_mode else AudioManager.CUE_BATTLE)
 
 func _layout_scene() -> void:
 	var viewport_size := get_viewport_rect().size
@@ -536,7 +560,7 @@ func _layout_submenu_panel(viewport_size: Vector2) -> void:
 	_submenu_panel.position.y = clampf(desired_y, min_top, max_top)
 
 func _apply_battle_sprite_art() -> void:
-	var player_actor_id := ActorVisuals.resolve_player_actor_id()
+	var player_actor_id := _player_actor_id()
 	_player_sprite.texture = ActorVisuals.get_battle_texture(player_actor_id)
 	if _player_sprite.texture == null:
 		_player_sprite.texture = _make_fallback_texture(64, 64, Color(0.58, 0.53, 0.47))
@@ -554,7 +578,7 @@ func _apply_battle_sprite_art() -> void:
 	_enemy_sprite.flip_h = ActorVisuals.get_battle_flip_h(enemy_actor_id)
 	_enemy_scale_multiplier = _reference_scale_for_height(
 		_enemy_sprite.texture,
-		ActorVisuals.get_battle_target_height(enemy_actor_id, SHAMAN_TARGET_HEIGHT if _shaman_boss_mode else ENEMY_TARGET_HEIGHT),
+		ActorVisuals.get_battle_target_height(enemy_actor_id, _enemy_target_height()),
 		1.5
 	)
 
@@ -580,7 +604,7 @@ func _apply_weapon_overlay() -> void:
 	_weapon_overlay_sprite.visible = true
 
 func _load_player_presentation_card() -> Texture2D:
-	var portrait := ActorVisuals.get_portrait(ActorVisuals.resolve_player_actor_id())
+	var portrait := ActorVisuals.get_portrait(_player_actor_id())
 	if portrait != null:
 		return portrait
 
@@ -618,7 +642,8 @@ func _refresh_all_ui() -> void:
 	_refresh_main_menu_buttons()
 
 func _refresh_hp_ui() -> void:
-	_update_hp_widget(_player_hp_fill, _player_hp_label, PlayerData.current_hp, PlayerData.get_max_hp())
+	var player_max_hp := CAPTAIN_PLAYER_MAX_HP if _prologue_captain_mode else PlayerData.get_max_hp()
+	_update_hp_widget(_player_hp_fill, _player_hp_label, PlayerData.current_hp, player_max_hp)
 	_update_hp_widget(_enemy_hp_fill, _enemy_hp_label, _enemy_hp, _enemy_max_hp)
 
 func _update_hp_widget(fill: ColorRect, value_label: Label, current_hp: int, max_hp: int) -> void:
@@ -642,6 +667,27 @@ func _refresh_main_menu_buttons() -> void:
 		return
 
 	var can_act := not _input_locked and not _battle_over
+	if _prologue_captain_mode:
+		_attack_button.text = "Strike"
+		_spell_button.text = "Spell"
+		_item_button.text = "Defend"
+		_flee_button.text = "Flee"
+		_ability_button.text = "Improvise"
+		_attack_button.disabled = not can_act
+		_spell_button.disabled = true
+		_spell_button.tooltip_text = "There is no time for Magik."
+		_item_button.disabled = not can_act
+		_item_button.tooltip_text = ""
+		_flee_button.disabled = true
+		_flee_button.tooltip_text = "The chapel doors are held."
+		_ability_button.disabled = not can_act
+		_ability_button.tooltip_text = ""
+		return
+
+	_attack_button.text = "Attack"
+	_spell_button.text = "Spell"
+	_item_button.text = "Item"
+	_flee_button.text = "Flee"
 	_attack_button.disabled = not can_act
 	_spell_button.disabled = not can_act or not PlayerData.has_battle_magik()
 	_spell_button.tooltip_text = "" if PlayerData.has_battle_magik() else "No Magik ability."
@@ -654,6 +700,8 @@ func _refresh_main_menu_buttons() -> void:
 	_ability_button.tooltip_text = "" if _ability_cooldown_remaining <= 0 else "Cooldown: %d turn(s)." % _ability_cooldown_remaining
 
 func _ability_button_text() -> String:
+	if _prologue_captain_mode:
+		return "Improvise"
 	var base_label := FIGHTER_ABILITY_LABEL if _player_class_id == PlayerData.CLASS_FIGHTER else BATTLEMAGE_ABILITY_LABEL
 	if _ability_cooldown_remaining > 0:
 		return "%s (%d)" % [base_label, _ability_cooldown_remaining]
@@ -733,6 +781,10 @@ func _begin_enemy_turn() -> void:
 	if _battle_over:
 		return
 
+	if _prologue_captain_mode:
+		_run_captain_enemy_turn()
+		return
+
 	if _shaman_boss_mode:
 		_run_shaman_enemy_turn()
 		return
@@ -765,6 +817,28 @@ func _run_enemy_attack() -> void:
 		return
 
 	await get_tree().create_timer(0.55).timeout
+	_begin_player_turn()
+
+func _run_captain_enemy_turn() -> void:
+	var damage_index: int = clampi(_prologue_round_index - 1, 0, CAPTAIN_ATTACK_DAMAGE_BY_ROUND.size() - 1)
+	var damage := int(CAPTAIN_ATTACK_DAMAGE_BY_ROUND[damage_index])
+	if _last_prologue_choice == PROLOGUE_CHOICE_DEFEND:
+		damage = maxi(2, damage - CAPTAIN_DEFEND_REDUCTION)
+
+	AudioManager.play_sfx(AudioManager.SFX_ATTACK_HIT, -2.0)
+	PlayerData.take_battle_damage(damage)
+	SignalBus.action_performed.emit({"type": "take_damage", "source": "captain_royal_guard"})
+	_flash_sprite(_player_sprite)
+	_refresh_hp_ui()
+	_append_log("The Captain answers for %d damage." % damage)
+	if damage >= 10:
+		_shake_camera(8.0)
+
+	if PlayerData.current_hp <= 0:
+		_run_defeat_sequence()
+		return
+
+	await get_tree().create_timer(0.65).timeout
 	_begin_player_turn()
 
 func _run_enemy_defend() -> void:
@@ -833,9 +907,14 @@ func _on_attack_pressed() -> void:
 	if _input_locked:
 		return
 	AudioManager.play_sfx(AudioManager.SFX_UI_CONFIRM, -7.0)
+	if _prologue_captain_mode:
+		_resolve_prologue_choice(PROLOGUE_CHOICE_STRIKE)
+		return
 	_resolve_player_attack()
 
 func _on_spell_pressed() -> void:
+	if _prologue_captain_mode:
+		return
 	if _input_locked or not PlayerData.has_battle_magik():
 		return
 
@@ -852,6 +931,9 @@ func _on_item_pressed() -> void:
 		return
 
 	AudioManager.play_sfx(AudioManager.SFX_UI_CONFIRM, -7.0)
+	if _prologue_captain_mode:
+		_resolve_prologue_choice(PROLOGUE_CHOICE_DEFEND)
+		return
 	_show_submenu([
 		{
 			"label": "Health Potion x%d" % PlayerData.get_item_count(PlayerData.HEALTH_POTION_ID),
@@ -863,6 +945,10 @@ func _on_item_pressed() -> void:
 func _on_flee_pressed() -> void:
 	if _input_locked:
 		return
+	if _prologue_captain_mode:
+		_append_log("The chapel doors are held. There is nowhere to run.")
+		_show_main_menu()
+		return
 	AudioManager.play_sfx(AudioManager.SFX_UI_CONFIRM, -7.0)
 	_attempt_flee()
 
@@ -871,6 +957,9 @@ func _on_ability_pressed() -> void:
 		return
 
 	AudioManager.play_sfx(AudioManager.SFX_UI_CONFIRM, -7.0)
+	if _prologue_captain_mode:
+		_resolve_prologue_choice(PROLOGUE_CHOICE_CLEVER)
+		return
 	if _player_class_id == PlayerData.CLASS_FIGHTER:
 		_resolve_shield_bash()
 	else:
@@ -890,6 +979,35 @@ func _resolve_player_attack() -> void:
 	AudioManager.play_sfx(AudioManager.SFX_ATTACK_SWING, -4.0)
 	var damage := _calculate_physical_damage(_modified_attack_power(_player_strength_for_attack() + PlayerData.get_battle_weapon_modifier()))
 	_apply_damage_to_enemy(damage, "You attack for %d damage." % damage, true)
+
+func _resolve_prologue_choice(choice: String) -> void:
+	_input_locked = true
+	_refresh_main_menu_buttons()
+	_prologue_round_index += 1
+	_last_prologue_choice = choice
+	PlayerData.set_flag("prologue_choice_round%d" % _prologue_round_index, choice)
+	SignalBus.action_performed.emit({"type": "prologue_captain_choice", "choice": choice, "round": _prologue_round_index})
+
+	var chip_damage := 0
+	var log_text := ""
+	match choice:
+		PROLOGUE_CHOICE_DEFEND:
+			log_text = "You hold your ground and make him come to you."
+		PROLOGUE_CHOICE_CLEVER:
+			chip_damage = 1
+			log_text = "You scatter ash across the aisle. He barely slows."
+		_:
+			chip_damage = 2
+			log_text = "Your strike scrapes armor, but the Captain does not yield."
+
+	if chip_damage > 0:
+		_enemy_hp = maxi(1, _enemy_hp - chip_damage)
+		_flash_sprite(_enemy_sprite)
+		AudioManager.play_sfx(AudioManager.SFX_ATTACK_HIT, -5.0)
+		_refresh_hp_ui()
+	_append_log(log_text)
+	await get_tree().create_timer(0.55).timeout
+	_finish_player_turn()
 
 func _resolve_flamebolt() -> void:
 	_input_locked = true
@@ -1001,6 +1119,14 @@ func _finish_player_turn() -> void:
 	_begin_enemy_turn()
 
 func _run_victory_sequence() -> void:
+	if _prologue_captain_mode:
+		_enemy_hp = 1
+		_refresh_hp_ui()
+		_append_log("The Captain absorbs the blow and ends the lesson.")
+		await get_tree().create_timer(0.45).timeout
+		_run_defeat_sequence()
+		return
+
 	_battle_over = true
 	_input_locked = true
 	_main_menu_panel.visible = false
@@ -1087,8 +1213,23 @@ func _run_defeat_sequence() -> void:
 	await get_tree().create_timer(0.8).timeout
 	_center_banner.visible = false
 
+	if _prologue_captain_mode:
+		await _return_to_prologue_post_battle()
+		return
+
 	_game_over_panel.visible = true
 	_try_again_button.grab_focus()
+
+func _return_to_prologue_post_battle() -> void:
+	var screen_fader = SceneManager.get_screen_fader()
+	if screen_fader != null:
+		var fade_tween: Tween = screen_fader.fade_to_black(0.35)
+		await fade_tween.finished
+
+	SceneManager.change_state(str(_context.get("return_state", "prologue_post_battle")), {
+		"source": "prologue_captain",
+		"fade_from_black": true,
+	}, true)
 
 func _xp_reward_for_current_encounter() -> int:
 	return SHAMAN_XP_REWARD if _shaman_boss_mode else KOBOLD_XP_REWARD
@@ -1323,7 +1464,17 @@ func _make_fallback_texture(width: int, height: int, color: Color) -> Texture2D:
 	return ImageTexture.create_from_image(image)
 
 func _enemy_actor_id() -> String:
+	if _prologue_captain_mode:
+		return ActorVisuals.ACTOR_CAPTAIN_ROYAL_GUARD
 	return ActorVisuals.ACTOR_SHAMAN if _shaman_boss_mode else ActorVisuals.ACTOR_KOBOLD
+
+func _player_actor_id() -> String:
+	return ActorVisuals.resolve_attendant_actor_id() if _prologue_captain_mode else ActorVisuals.resolve_player_actor_id()
+
+func _enemy_target_height() -> float:
+	if _prologue_captain_mode:
+		return 112.0
+	return SHAMAN_TARGET_HEIGHT if _shaman_boss_mode else ENEMY_TARGET_HEIGHT
 
 func _encounter_kind() -> String:
 	return str(_context.get("encounter_kind", BATTLE_KIND_STANDARD))

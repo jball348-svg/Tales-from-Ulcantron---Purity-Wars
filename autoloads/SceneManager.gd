@@ -8,10 +8,12 @@ const STATE_SCENES: Dictionary = {
 	"battle": "res://scenes/battle/Battle.tscn",
 	"cutscene": "res://scenes/cutscene/Cutscene.tscn",
 	"title": "res://scenes/title/TitleScreen.tscn",
+	"prologue_player_select": "res://scenes/prologue/ProloguePlayerSelect.tscn",
 	"prologue_intro": "res://scenes/prologue/PrologueIntro.tscn",
 	"prologue_chapel": "res://scenes/prologue/PrologueChapel.tscn",
 	"prologue_side_passage": "res://scenes/prologue/PrologueSidePassage.tscn",
 	"prologue_inciting": "res://scenes/prologue/PrologueInciting.tscn",
+	"prologue_post_battle": "res://scenes/prologue/ProloguePostBattle.tscn",
 	"character_creation": "res://scenes/character_creation/CharacterCreation.tscn",
 }
 

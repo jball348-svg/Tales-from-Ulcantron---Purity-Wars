@@ -3,7 +3,7 @@
   "nodes": [
     {
       "speaker": "Palace Steward",
-      "text": "[POLISH PASS] You. Attendant. Inside the next chamber and stay at the wall — the Princess wants no fuss.",
+      "text": "You. Attendant. Inside the next chamber and stay at the wall — the Princess wants no fuss.",
       "portrait_id": "steward",
       "portrait": "",
       "conditions": [],
@@ -11,7 +11,7 @@
     },
     {
       "speaker": "Palace Steward",
-      "text": "[POLISH PASS] The King has been told. That is all I will say.",
+      "text": "The King has been told. That is all I will say.",
       "portrait_id": "steward",
       "portrait": "",
       "conditions": [],

@@ -82,16 +82,16 @@ func start_new_game() -> bool:
 	PlayerData.current_location = FRONTIER_START_LOCATION
 	SceneManager.clear_state_payload()
 	# New games now route through the prologue. No save is committed until the
-	# player completes character creation; quitting mid-prologue replays it on
-	# the next New Game.
-	var started := SceneManager.change_state("prologue_intro", {
+	# character-creation milestone is implemented; quitting mid-prologue replays
+	# it on the next New Game.
+	var started := SceneManager.change_state("prologue_player_select", {
 		"source": "new_game",
 		"fade_from_black": true,
 	}, true)
 	_is_loading = false
 
 	if not started:
-		push_warning("SaveManager: failed to enter prologue_intro for a new game.")
+		push_warning("SaveManager: failed to enter prologue_player_select for a new game.")
 		return false
 
 	return true

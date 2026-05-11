@@ -5,7 +5,7 @@
   "music_cue": "victory_exit",
   "menu_layout_mode": "keyart_overlay",
   "version_text": "Ver. 1.0.0",
-  "copyright_text": "© 2024 Luminaris Games",
+  "copyright_text": "",
   "asset_slots": {
     "background": "res://assets/proprietary/production/title/title_keyart_purity_wars_v01.png",
     "logo": "",

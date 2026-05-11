@@ -72,6 +72,9 @@ func get_registry() -> Dictionary:
 func resolve_player_actor_id() -> String:
 	return ACTOR_PLAYER_BATTLEMAGE if PlayerData.resolve_class_id() == PlayerData.CLASS_BATTLEMAGE else ACTOR_PLAYER_FIGHTER
 
+func resolve_attendant_actor_id() -> String:
+	return ACTOR_PLAYER_ATTENDANT_FEMALE if PlayerData.attendant_presentation == PlayerData.ATTENDANT_PRESENTATION_FEMALE else ACTOR_PLAYER_ATTENDANT_MALE
+
 func get_map_offset(actor_id: String) -> Vector2:
 	var map_entry: Dictionary = _actor_section(actor_id, "map")
 	return map_entry.get("offset", DEFAULT_MAP_OFFSET)
@@ -418,32 +421,74 @@ func _ensure_registry() -> void:
 			"cutscene": {},
 			"follower": {},
 		},
-		ACTOR_PEW_NPC_A: _build_prologue_npc_entry(Color(0.78, 0.72, 0.58, 1.0)),
-		ACTOR_PEW_NPC_B: _build_prologue_npc_entry(Color(0.62, 0.74, 0.86, 1.0)),
+		ACTOR_PEW_NPC_A: _build_prologue_npc_entry(
+			Color(0.78, 0.72, 0.58, 1.0),
+			"",
+			"",
+			_build_sheet_frame_map_entry(FIGHTER_MAP_SHEET_PATH, PLAYER_DIRECTION_ROWS["down"], PLAYER_IDLE_COLUMN, Color(0.78, 0.72, 0.58, 1.0))
+		),
+		ACTOR_PEW_NPC_B: _build_prologue_npc_entry(
+			Color(0.62, 0.74, 0.86, 1.0),
+			"",
+			"",
+			_build_sheet_frame_map_entry(BATTLEMAGE_MAP_SHEET_PATH, PLAYER_DIRECTION_ROWS["down"], PLAYER_IDLE_COLUMN, Color(0.62, 0.74, 0.86, 1.0))
+		),
 		ACTOR_PEW_NPC_C: _build_prologue_npc_entry(Color(0.86, 0.62, 0.62, 1.0)),
 		ACTOR_PEW_NPC_D: _build_prologue_npc_entry(Color(0.66, 0.84, 0.66, 1.0)),
-		ACTOR_TEMPLE_ATTENDANT: _build_prologue_npc_entry(Color(0.96, 0.92, 0.78, 1.0)),
-		ACTOR_STEWARD: _build_prologue_npc_entry(Color(0.62, 0.52, 0.78, 1.0)),
-		ACTOR_PRINCESS: _build_prologue_npc_entry(Color(0.84, 0.68, 0.96, 1.0), "res://assets/proprietary/production/portraits/princess_portrait_v01.png"),
-		ACTOR_KING_ALDREN: _build_prologue_npc_entry(Color(0.74, 0.62, 0.34, 1.0), "res://assets/proprietary/production/portraits/king_aldren_portrait_v01.png"),
-		ACTOR_QUEEN: _build_prologue_npc_entry(Color(0.96, 0.86, 0.78, 1.0), "res://assets/proprietary/production/portraits/queen_portrait_v01.png"),
+		ACTOR_TEMPLE_ATTENDANT: _build_prologue_npc_entry(
+			Color(0.96, 0.92, 0.78, 1.0),
+			"",
+			"",
+			_build_sheet_frame_map_entry(BATTLEMAGE_MAP_SHEET_PATH, PLAYER_DIRECTION_ROWS["down"], 1, Color(0.96, 0.92, 0.78, 1.0), Vector2(0.0, -12.0), Vector2.ONE * 0.48)
+		),
+		ACTOR_STEWARD: _build_prologue_npc_entry(
+			Color(0.62, 0.52, 0.78, 1.0),
+			"",
+			"",
+			_build_sheet_frame_map_entry(FIGHTER_MAP_SHEET_PATH, PLAYER_DIRECTION_ROWS["down"], 2, Color(0.62, 0.52, 0.78, 1.0))
+		),
+		ACTOR_PRINCESS: _build_prologue_npc_entry(
+			Color(0.84, 0.68, 0.96, 1.0),
+			"res://assets/proprietary/production/portraits/princess_portrait_v01.png",
+			"",
+			_build_sheet_frame_map_entry(BATTLEMAGE_MAP_SHEET_PATH, PLAYER_DIRECTION_ROWS["down"], PLAYER_IDLE_COLUMN, Color(0.84, 0.68, 0.96, 1.0), Vector2(0.0, -13.0), Vector2.ONE * 0.52)
+		),
+		ACTOR_KING_ALDREN: _build_prologue_npc_entry(
+			Color(0.74, 0.62, 0.34, 1.0),
+			"res://assets/proprietary/production/portraits/king_aldren_portrait_v01.png",
+			"",
+			_build_sheet_frame_map_entry(FIGHTER_MAP_SHEET_PATH, PLAYER_DIRECTION_ROWS["down"], PLAYER_IDLE_COLUMN, Color(0.74, 0.62, 0.34, 1.0), Vector2(0.0, -14.0), Vector2.ONE * 0.58)
+		),
+		ACTOR_QUEEN: _build_prologue_npc_entry(
+			Color(0.96, 0.86, 0.78, 1.0),
+			"res://assets/proprietary/production/portraits/queen_portrait_v01.png",
+			"",
+			_build_sheet_frame_map_entry(BATTLEMAGE_MAP_SHEET_PATH, PLAYER_DIRECTION_ROWS["down"], 2, Color(0.96, 0.86, 0.78, 1.0), Vector2(0.0, -13.0), Vector2.ONE * 0.52)
+		),
 		ACTOR_CAPTAIN_ROYAL_GUARD: _build_prologue_npc_entry(
 			Color(0.42, 0.42, 0.52, 1.0),
 			"res://assets/proprietary/production/portraits/captain_royal_guard_portrait_v01.png",
-			"res://assets/proprietary/production/sprites/captain_royal_guard_battle_v01.png"
+			"res://assets/proprietary/production/sprites/captain_royal_guard_battle_v01.png",
+			_build_sheet_frame_map_entry(FIGHTER_MAP_SHEET_PATH, PLAYER_DIRECTION_ROWS["down"], 1, Color(0.70, 0.72, 0.80, 1.0), Vector2(0.0, -15.0), Vector2.ONE * 0.62),
+			112.0
 		),
-		ACTOR_INITIATE: _build_prologue_npc_entry(Color(0.92, 0.88, 0.82, 1.0)),
+		ACTOR_INITIATE: _build_prologue_npc_entry(
+			Color(0.92, 0.88, 0.82, 1.0),
+			"",
+			"",
+			_build_sheet_frame_map_entry(BATTLEMAGE_MAP_SHEET_PATH, PLAYER_DIRECTION_ROWS["down"], 0, Color(0.92, 0.88, 0.82, 1.0), Vector2(0.0, -10.0), Vector2.ONE * 0.42)
+		),
 		ACTOR_PLAYER_ATTENDANT_MALE: _build_prologue_npc_entry(
 			Color(0.72, 0.66, 0.88, 1.0),
 			"",
-			"res://assets/proprietary/production/sprites/player_attendant_male_battle_v01.png"
+			"res://assets/proprietary/production/sprites/player_attendant_male_battle_v01.png",
+			_build_directional_map_entry(FIGHTER_MAP_SHEET_PATH, Color(0.72, 0.66, 0.88, 1.0)),
+			88.0
 		),
-		ACTOR_PLAYER_ATTENDANT_FEMALE: _build_prologue_npc_entry(
-			Color(0.76, 0.66, 0.92, 1.0)
-		),
+		ACTOR_PLAYER_ATTENDANT_FEMALE: _build_player_attendant_female_entry(),
 	}
 
-func _build_prologue_npc_entry(tint: Color, portrait_path: String = "", battle_path: String = "") -> Dictionary:
+func _build_prologue_npc_entry(tint: Color, portrait_path: String = "", battle_path: String = "", map_entry: Dictionary = {}, battle_target_height: float = 88.0, battle_flip_h: bool = false) -> Dictionary:
 	# Hybrid placeholder/proprietary registration. Map sprites still share the
 	# LPC universal-sprite bookstore region tinted by `tint` until a sprite-
 	# sheet-specialised pipeline produces proper walking sheets. When
@@ -464,21 +509,72 @@ func _build_prologue_npc_entry(tint: Color, portrait_path: String = "", battle_p
 		}
 	var battle_entry: Dictionary = {}
 	if battle_path != "":
-		battle_entry = { "type": "texture", "path": battle_path }
-	return {
-		"accent": tint,
-		"map": {
+		battle_entry = {
+			"type": "texture",
+			"path": battle_path,
+			"flip_h": battle_flip_h,
+			"target_height": battle_target_height,
+		}
+	var resolved_map_entry := map_entry.duplicate(true)
+	if resolved_map_entry.is_empty():
+		resolved_map_entry = {
 			"type": "atlas",
 			"path": LPC_SPRITE_SHEET_PATH,
 			"region": LPC_BOOKSTORE_REGION,
 			"offset": DEFAULT_MAP_OFFSET,
 			"scale": DEFAULT_MAP_SCALE,
 			"modulate": tint,
-		},
+		}
+	return {
+		"accent": tint,
+		"map": resolved_map_entry,
 		"battle": battle_entry,
 		"portrait": portrait_entry,
 		"cutscene": {},
 		"follower": {},
+	}
+
+func _build_player_attendant_female_entry() -> Dictionary:
+	var entry := _build_prologue_npc_entry(
+		Color(0.76, 0.66, 0.92, 1.0),
+		"",
+		"",
+		_build_directional_map_entry(BATTLEMAGE_MAP_SHEET_PATH, Color(0.76, 0.66, 0.92, 1.0))
+	)
+	entry["battle"] = {
+		"type": "sheet_frame",
+		"path": BATTLEMAGE_MAP_SHEET_PATH,
+		"frame_size": PLAYER_FRAME_SIZE,
+		"row": PLAYER_DIRECTION_ROWS["right"],
+		"column": PLAYER_IDLE_COLUMN,
+		"flip_h": false,
+		"target_height": 88.0,
+	}
+	return entry
+
+func _build_directional_map_entry(path: String, tint: Color, offset: Vector2 = DEFAULT_MAP_OFFSET, scale: Vector2 = DEFAULT_MAP_SCALE) -> Dictionary:
+	return {
+		"type": "sheet_frames",
+		"path": path,
+		"frame_size": PLAYER_FRAME_SIZE,
+		"idle_column": PLAYER_IDLE_COLUMN,
+		"walk_columns": 9,
+		"direction_rows": PLAYER_DIRECTION_ROWS,
+		"offset": offset,
+		"scale": scale,
+		"modulate": tint,
+	}
+
+func _build_sheet_frame_map_entry(path: String, row: int, column: int, tint: Color, offset: Vector2 = DEFAULT_MAP_OFFSET, scale: Vector2 = DEFAULT_MAP_SCALE) -> Dictionary:
+	return {
+		"type": "sheet_frame",
+		"path": path,
+		"frame_size": PLAYER_FRAME_SIZE,
+		"row": row,
+		"column": column,
+		"offset": offset,
+		"scale": scale,
+		"modulate": tint,
 	}
 
 func _actor_section(actor_id: String, section_name: String) -> Dictionary:

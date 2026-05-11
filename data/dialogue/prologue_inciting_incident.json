@@ -3,7 +3,7 @@
   "nodes": [
     {
       "speaker": "King Aldren",
-      "text": "[POLISH PASS] Step back from the dais. This is a Pure Rite, and you know it.",
+      "text": "Step back from the dais. This is a Pure Rite, and you know it.",
       "portrait_id": "king_aldren",
       "portrait": "res://assets/proprietary/production/portraits/king_aldren_portrait_v01.png",
       "conditions": [],
@@ -11,7 +11,7 @@
     },
     {
       "speaker": "Princess",
-      "text": "[POLISH PASS] I know what it is. I am still here.",
+      "text": "I know what it is. I am still here.",
       "portrait_id": "princess",
       "portrait": "res://assets/proprietary/production/portraits/princess_portrait_v01.png",
       "conditions": [],
@@ -19,7 +19,7 @@
     },
     {
       "speaker": "King Aldren",
-      "text": "[POLISH PASS] You will silence yourself or I will silence you for you.",
+      "text": "You will silence yourself or I will silence you for you.",
       "portrait_id": "king_aldren",
       "portrait": "res://assets/proprietary/production/portraits/king_aldren_portrait_v01.png",
       "conditions": [],
@@ -27,7 +27,7 @@
     },
     {
       "speaker": "Princess",
-      "text": "[POLISH PASS] Then silence me. I will not pretend to be one thing in front of these people.",
+      "text": "Then silence me. I will not pretend to be one thing in front of these people.",
       "portrait_id": "princess",
       "portrait": "res://assets/proprietary/production/portraits/princess_portrait_v01.png",
       "conditions": [],
@@ -35,7 +35,7 @@
     },
     {
       "speaker": "Queen",
-      "text": "[POLISH PASS] Aldren. Not in front of the witnesses. Not like this.",
+      "text": "Aldren. Not in front of the witnesses. Not like this.",
       "portrait_id": "queen",
       "portrait": "res://assets/proprietary/production/portraits/queen_portrait_v01.png",
       "conditions": [],
@@ -43,7 +43,7 @@
     },
     {
       "speaker": "King Aldren",
-      "text": "[POLISH PASS] Captain. Hold the line. The boy is not to leave the dais.",
+      "text": "Captain. Hold the line. The boy is not to leave the dais.",
       "portrait_id": "king_aldren",
       "portrait": "res://assets/proprietary/production/portraits/king_aldren_portrait_v01.png",
       "conditions": [],

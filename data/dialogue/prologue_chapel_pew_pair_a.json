@@ -3,7 +3,7 @@
   "nodes": [
     {
       "speaker": "Pew Attendant",
-      "text": "[POLISH PASS] Can you believe it? The Princess herself.",
+      "text": "Can you believe it? The Princess herself.",
       "portrait_id": "pew_npc_a",
       "portrait": "",
       "conditions": [],
@@ -11,7 +11,7 @@
     },
     {
       "speaker": "Pew Attendant",
-      "text": "[POLISH PASS] She's been spending time with the Classes, they say.",
+      "text": "She's been spending time with the Classes, they say.",
       "portrait_id": "pew_npc_b",
       "portrait": "",
       "conditions": [],
@@ -19,7 +19,7 @@
     },
     {
       "speaker": "Pew Attendant",
-      "text": "[POLISH PASS] That explains the guards.",
+      "text": "That explains the guards.",
       "portrait_id": "pew_npc_a",
       "portrait": "",
       "conditions": [],
@@ -27,7 +27,7 @@
     },
     {
       "speaker": "Pew Attendant",
-      "text": "[POLISH PASS] Still… a ceremony's a ceremony.",
+      "text": "Still… a ceremony's a ceremony.",
       "portrait_id": "pew_npc_b",
       "portrait": "",
       "conditions": [],
@@ -35,7 +35,7 @@
     },
     {
       "speaker": "Pew Attendant",
-      "text": "[POLISH PASS] Especially when it's Magik.",
+      "text": "Especially when it's Magik.",
       "portrait_id": "pew_npc_a",
       "portrait": "",
       "conditions": [],

@@ -97,7 +97,7 @@ func _transition_to_next() -> void:
 func _apply_player_visuals() -> void:
 	if not is_instance_valid(player_sprite):
 		return
-	var actor_id := ActorVisuals.resolve_player_actor_id()
+	var actor_id := ActorVisuals.resolve_attendant_actor_id()
 	var frames := ActorVisuals.get_map_frames(actor_id)
 	if frames != null:
 		player_sprite.sprite_frames = frames

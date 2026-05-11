@@ -1,0 +1,64 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scenes/prologue/ProloguePlayerSelect.gd" id="1_select"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_select_bg"]
+bg_color = Color(0.035, 0.03, 0.055, 1)
+
+[node name="ProloguePlayerSelect" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_select")
+
+[node name="Background" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_select_bg")
+
+[node name="Center" type="CenterContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Layout" type="VBoxContainer" parent="Center"]
+custom_minimum_size = Vector2(380, 0)
+theme_override_constants/separation = 14
+alignment = 1
+
+[node name="Heading" type="Label" parent="Center/Layout"]
+horizontal_alignment = 1
+text = "Choose Your Attendant"
+theme_override_font_sizes/font_size = 18
+
+[node name="Prompt" type="Label" parent="Center/Layout"]
+horizontal_alignment = 1
+autowrap_mode = 3
+modulate = Color(0.92, 0.88, 0.78, 0.92)
+text = "Select the presentation for the prologue sprite."
+theme_override_font_sizes/font_size = 10
+
+[node name="ButtonRow" type="HBoxContainer" parent="Center/Layout"]
+alignment = 1
+theme_override_constants/separation = 14
+
+[node name="MaleButton" type="Button" parent="Center/Layout/ButtonRow"]
+custom_minimum_size = Vector2(128, 32)
+text = "Male"
+theme_override_font_sizes/font_size = 12
+
+[node name="FemaleButton" type="Button" parent="Center/Layout/ButtonRow"]
+custom_minimum_size = Vector2(128, 32)
+text = "Female"
+theme_override_font_sizes/font_size = 12

@@ -5,6 +5,12 @@
 extends Node
 
 const VALID_PATHS: Array[String] = ["pure", "mixed"]
+const ATTENDANT_PRESENTATION_MALE := "male"
+const ATTENDANT_PRESENTATION_FEMALE := "female"
+const VALID_ATTENDANT_PRESENTATIONS: Array[String] = [
+	ATTENDANT_PRESENTATION_MALE,
+	ATTENDANT_PRESENTATION_FEMALE,
+]
 const CLASS_FIGHTER := "fighter"
 const CLASS_BATTLEMAGE := "battlemage"
 const HEALTH_POTION_ID := "health_potion"
@@ -41,6 +47,7 @@ var chosen_class: String     = ""
 var chosen_path: String      = ""   # "pure" or "mixed"
 var specialisation: String   = ""
 var mixed_classes: Array     = []
+var attendant_presentation: String = ATTENDANT_PRESENTATION_MALE
 
 # --- World flags ---
 # Persistent decisions the world remembers.
@@ -107,6 +114,7 @@ func get_save_data() -> Dictionary:
 		"chosen_path": chosen_path,
 		"specialisation": specialisation,
 		"mixed_classes": mixed_classes.duplicate(true),
+		"attendant_presentation": attendant_presentation,
 		"gold": gold,
 		"current_hp": current_hp,
 		"age_years": age_years,
@@ -137,6 +145,7 @@ func apply_save_data(save_data: Variant) -> void:
 	chosen_class = str(player_data.get("chosen_class", ""))
 	specialisation = str(player_data.get("specialisation", ""))
 	mixed_classes = _duplicate_array(player_data.get("mixed_classes", []))
+	set_attendant_presentation(str(player_data.get("attendant_presentation", attendant_presentation)), false)
 	if chosen_class == "":
 		_apply_class_defaults_for_current_path()
 
@@ -155,6 +164,7 @@ func reset_to_defaults() -> void:
 	chosen_path = ""
 	specialisation = ""
 	mixed_classes = []
+	attendant_presentation = ATTENDANT_PRESENTATION_MALE
 	flags = {}
 	ghost_flags = {}
 	current_location = DEFAULT_LOCATION
@@ -260,6 +270,18 @@ func set_profile_path(path: String) -> void:
 		chosen_class = CLASS_BATTLEMAGE
 	else:
 		chosen_class = CLASS_FIGHTER
+
+func set_attendant_presentation(presentation: String, emit_signal: bool = true) -> void:
+	if not VALID_ATTENDANT_PRESENTATIONS.has(presentation):
+		push_warning("Invalid attendant_presentation requested: %s" % presentation)
+		return
+
+	if attendant_presentation == presentation:
+		return
+
+	attendant_presentation = presentation
+	if emit_signal:
+		SignalBus.flag_set.emit("attendant_presentation", attendant_presentation)
 
 func resolve_class_id() -> String:
 	if chosen_class != "":

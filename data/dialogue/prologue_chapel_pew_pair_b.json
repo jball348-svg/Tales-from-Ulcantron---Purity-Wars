@@ -3,7 +3,7 @@
   "nodes": [
     {
       "speaker": "Pew Attendant",
-      "text": "[POLISH PASS] You're early, child. Are they testing the staff today as well?",
+      "text": "You're early, child. Are they testing the staff today as well?",
       "portrait_id": "pew_npc_b",
       "portrait": "",
       "conditions": [],
@@ -11,7 +11,7 @@
     },
     {
       "speaker": "Pew Attendant",
-      "text": "[POLISH PASS] My grandson is the initiate this morning. I have prayed thrice over.",
+      "text": "My grandson is the initiate this morning. I have prayed thrice over.",
       "portrait_id": "pew_npc_b",
       "portrait": "",
       "conditions": [],

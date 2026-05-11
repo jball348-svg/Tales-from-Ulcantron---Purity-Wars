@@ -1,138 +1,140 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scenes/prologue/PrologueInciting.gd" id="1_inciting"]
-[ext_resource type="Texture2D" path="res://assets/art/battle/monster2_combat_backgrounds/keep.png" id="2_inciting_bg"]
-[ext_resource type="Script" path="res://scenes/ui/TypewriterLabel.gd" id="3_typewriter"]
-[ext_resource type="Texture2D" path="res://assets/proprietary/production/sprites/player_attendant_male_battle_v01.png" id="4_attendant_battle"]
-[ext_resource type="Texture2D" path="res://assets/proprietary/production/sprites/captain_royal_guard_battle_v01.png" id="5_captain_battle"]
+[ext_resource type="PackedScene" path="res://scenes/npc/NPC.tscn" id="2_npc"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_choice_panel"]
-bg_color = Color(0.04, 0.03, 0.08, 0.86)
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.55, 0.42, 0.78, 0.85)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_inciting_player"]
+size = Vector2(20, 20)
 
-[node name="PrologueInciting" type="Control"]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_inciting_wall_top"]
+size = Vector2(592, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_inciting_wall_bottom"]
+size = Vector2(592, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_inciting_wall_vertical"]
+size = Vector2(16, 328)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_inciting_exit_trigger"]
+size = Vector2(1, 1)
+
+[node name="PrologueInciting" type="Node2D"]
 script = ExtResource("1_inciting")
+ambient_music_cue = "town"
 
-[node name="Background" type="TextureRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="Floor" type="ColorRect" parent="."]
+position = Vector2(0, 0)
+size = Vector2(640, 360)
+color = Color(0.065, 0.055, 0.075, 1)
 mouse_filter = 2
-texture = ExtResource("2_inciting_bg")
-expand_mode = 1
-stretch_mode = 6
 
-[node name="Tint" type="ColorRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="StoneFloor" type="ColorRect" parent="."]
+position = Vector2(24, 16)
+size = Vector2(592, 328)
+color = Color(0.14, 0.13, 0.15, 1)
 mouse_filter = 2
-color = Color(0.10, 0.04, 0.18, 0.55)
 
-[node name="AttendantSprite" type="TextureRect" parent="."]
-layout_mode = 1
-anchors_preset = 4
-anchor_top = 0.5
-anchor_bottom = 0.5
-offset_left = 24.0
-offset_top = -88.0
-offset_right = 184.0
-offset_bottom = 72.0
-grow_vertical = 2
+[node name="RoyalDais" type="ColorRect" parent="."]
+position = Vector2(82, 28)
+size = Vector2(476, 112)
+color = Color(0.24, 0.20, 0.24, 1)
 mouse_filter = 2
-texture = ExtResource("4_attendant_battle")
-expand_mode = 1
-stretch_mode = 5
 
-[node name="CaptainSprite" type="TextureRect" parent="."]
-layout_mode = 1
-anchors_preset = 6
-anchor_left = 1.0
-anchor_top = 0.5
-anchor_right = 1.0
-anchor_bottom = 0.5
-offset_left = -200.0
-offset_top = -100.0
-offset_right = -24.0
-offset_bottom = 76.0
-grow_horizontal = 0
-grow_vertical = 2
+[node name="ThroneCarpet" type="ColorRect" parent="."]
+position = Vector2(288, 28)
+size = Vector2(64, 240)
+color = Color(0.43, 0.09, 0.14, 1)
 mouse_filter = 2
-texture = ExtResource("5_captain_battle")
-expand_mode = 1
-stretch_mode = 5
 
-[node name="VignetteLabel" type="Label" parent="."]
-layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 32.0
-offset_top = -120.0
-offset_right = -32.0
-offset_bottom = -68.0
-grow_horizontal = 2
-grow_vertical = 0
-horizontal_alignment = 1
-vertical_alignment = 0
-autowrap_mode = 3
-modulate = Color(0.96, 0.92, 0.84, 1.0)
-theme_override_font_sizes/font_size = 10
-script = ExtResource("3_typewriter")
-chars_per_sec = 38.0
+[node name="WitnessLine" type="ColorRect" parent="."]
+position = Vector2(96, 174)
+size = Vector2(448, 14)
+color = Color(0.28, 0.24, 0.23, 1)
+mouse_filter = 2
 
-[node name="ChoicePanel" type="PanelContainer" parent="."]
-layout_mode = 1
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -200.0
-offset_top = -56.0
-offset_right = 200.0
-offset_bottom = -16.0
-grow_horizontal = 2
-grow_vertical = 0
-mouse_filter = 1
-theme_override_styles/panel = SubResource("StyleBoxFlat_choice_panel")
+[node name="LeftBanner" type="ColorRect" parent="."]
+position = Vector2(64, 40)
+size = Vector2(28, 86)
+color = Color(0.56, 0.12, 0.18, 1)
+mouse_filter = 2
 
-[node name="Layout" type="HBoxContainer" parent="ChoicePanel"]
-theme_override_constants/separation = 12
+[node name="RightBanner" type="ColorRect" parent="."]
+position = Vector2(548, 40)
+size = Vector2(28, 86)
+color = Color(0.20, 0.28, 0.56, 1)
+mouse_filter = 2
 
-[node name="DefendButton" type="Button" parent="ChoicePanel/Layout"]
-custom_minimum_size = Vector2(120, 24)
-text = "Defend"
-theme_override_font_sizes/font_size = 10
+[node name="WorldCollision" type="StaticBody2D" parent="."]
 
-[node name="StrikeButton" type="Button" parent="ChoicePanel/Layout"]
-custom_minimum_size = Vector2(120, 24)
-text = "Strike"
-theme_override_font_sizes/font_size = 10
+[node name="WallTop" type="CollisionShape2D" parent="WorldCollision"]
+position = Vector2(320, 16)
+shape = SubResource("RectangleShape2D_inciting_wall_top")
 
-[node name="CleverButton" type="Button" parent="ChoicePanel/Layout"]
-custom_minimum_size = Vector2(120, 24)
-text = "Improvise"
-theme_override_font_sizes/font_size = 10
+[node name="WallBottom" type="CollisionShape2D" parent="WorldCollision"]
+position = Vector2(320, 344)
+shape = SubResource("RectangleShape2D_inciting_wall_bottom")
+
+[node name="WallLeft" type="CollisionShape2D" parent="WorldCollision"]
+position = Vector2(24, 180)
+shape = SubResource("RectangleShape2D_inciting_wall_vertical")
+
+[node name="WallRight" type="CollisionShape2D" parent="WorldCollision"]
+position = Vector2(616, 180)
+shape = SubResource("RectangleShape2D_inciting_wall_vertical")
+
+[node name="PlayerSpawn" type="Marker2D" parent="."]
+position = Vector2(320, 302)
+
+[node name="Bounds" type="Node2D" parent="."]
+
+[node name="Min" type="Marker2D" parent="Bounds"]
+position = Vector2(24, 16)
+
+[node name="Max" type="Marker2D" parent="Bounds"]
+position = Vector2(616, 344)
+
+[node name="Player" type="CharacterBody2D" parent="."]
+position = Vector2(320, 302)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
+shape = SubResource("RectangleShape2D_inciting_player")
+
+[node name="PlayerSprite" type="AnimatedSprite2D" parent="Player"]
+texture_filter = 1
+position = Vector2(0, -12)
+
+[node name="MapCamera" type="Camera2D" parent="Player"]
+position_smoothing_enabled = true
+position_smoothing_speed = 8.0
+
+[node name="ExitTrigger" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ExitTrigger"]
+position = Vector2(-100, -100)
+shape = SubResource("RectangleShape2D_inciting_exit_trigger")
+
+[node name="KingAldren" parent="." instance=ExtResource("2_npc")]
+position = Vector2(254, 86)
+npc_name = "King Aldren"
+actor_id = "king_aldren"
+
+[node name="Queen" parent="." instance=ExtResource("2_npc")]
+position = Vector2(386, 86)
+npc_name = "Queen"
+actor_id = "queen"
+
+[node name="Princess" parent="." instance=ExtResource("2_npc")]
+position = Vector2(320, 132)
+npc_id = "prologue_inciting_incident"
+npc_name = "Princess"
+actor_id = "princess"
+
+[node name="Captain" parent="." instance=ExtResource("2_npc")]
+position = Vector2(392, 170)
+npc_name = "Captain"
+actor_id = "captain_royal_guard"
+
+[node name="Initiate" parent="." instance=ExtResource("2_npc")]
+position = Vector2(320, 214)
+npc_name = "Initiate"
+actor_id = "initiate"
