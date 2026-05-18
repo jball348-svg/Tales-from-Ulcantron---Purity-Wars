@@ -35,6 +35,19 @@ func _ready() -> void:
 		AudioManager.play_music(ambient_music_cue)
 	if bool(payload.get("fade_from_black", false)) or str(payload.get("source", "")) == "new_game":
 		_play_fade_in()
+	# Boost player sprite to a forced z so it draws above the painted backdrop
+	# regardless of tree order. The placeholder-phase pixel-art player sprite
+	# is small against the painted chapel diorama; bump it ~2x bigger than
+	# NPCs so the protagonist reads clearly during placeholder-phase walking.
+	if is_instance_valid(player_sprite):
+		player_sprite.z_index = 50
+		player_sprite.z_as_relative = false
+		player_sprite.scale = Vector2(2.0, 2.0)  # debug: bump big to confirm rendering
+		player_sprite.modulate = Color(1.0, 0.2, 0.2, 1.0)  # debug: red
+		print("[DBG] final scale=", player_sprite.scale, " mod=", player_sprite.modulate,
+			" player_world=", player.global_position,
+			" sprite_global=", player_sprite.global_position,
+			" cam_global=", map_camera.global_position)
 
 func _apply_player_indicator() -> void:
 	# Disabled. The early-prologue "▼ you" placeholder label was a crutch for the
@@ -88,6 +101,9 @@ func _apply_player_visuals() -> void:
 		player_sprite.sprite_frames = frames
 	player_sprite.position = ActorVisuals.get_map_offset(actor_id)
 	player_sprite.scale = ActorVisuals.get_map_scale(actor_id)
+	# Apply the actor's accent tint so the player reads as visually distinct
+	# from the LPC-tinted NPCs surrounding them on the chapel map.
+	player_sprite.modulate = ActorVisuals.get_map_modulate(actor_id)
 	_update_player_animation(Vector2.ZERO)
 
 func _apply_npc_visuals() -> void:

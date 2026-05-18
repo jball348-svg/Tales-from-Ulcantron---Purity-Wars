@@ -36,7 +36,7 @@ mouse_filter = 2
 [node name="Background" type="Sprite2D" parent="."]
 texture_filter = 1
 position = Vector2(320, 180)
-scale = Vector2(0.466, 0.469)
+scale = Vector2(0.62, 0.62)
 texture = ExtResource("3_chapel_bg")
 
 [node name="WorldCollision" type="StaticBody2D" parent="."]
@@ -70,7 +70,7 @@ position = Vector2(418, 94)
 shape = SubResource("RectangleShape2D_chapel_wall_altar")
 
 [node name="PlayerSpawn" type="Marker2D" parent="."]
-position = Vector2(320, 318)
+position = Vector2(320, 250)
 
 [node name="Bounds" type="Node2D" parent="."]
 
@@ -81,7 +81,7 @@ position = Vector2(24, 16)
 position = Vector2(616, 344)
 
 [node name="Player" type="CharacterBody2D" parent="."]
-position = Vector2(320, 318)
+position = Vector2(320, 250)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
 shape = SubResource("RectangleShape2D_chapel_player")
